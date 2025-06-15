@@ -1,0 +1,381 @@
+<script setup lang="js">
+
+  import ClickableCard from "~/components/ClickableCard.vue";
+
+  const route = useRoute();
+
+  const rawSlug = route.params.slug;
+  console.log(rawSlug);
+
+  const id = rawSlug.split('-').pop();
+  console.log(id)
+
+  const {data: teacher, pending, error} = await useFetch('http://localhost:8080/api/v1/teachers/' + id);
+
+  let extra_photos = [];
+
+  for (let p = 1; p < teacher.value.data.photos.length; p++) {
+    extra_photos.push(teacher.value.data.photos[p]);
+  }
+
+  useSeoMeta({
+    title: teacher.value.data.name + " " + teacher.value.data.surname,
+    description: "This is " + teacher.value.data.name + " " + teacher.value.data.surname + "'s page, where their courses, experiences and skills can be found.",
+  })
+
+  //TODO: create fake experiences for teachers
+  //TODO: create more fake images for teachers
+</script>
+
+<template>
+
+
+
+  <Navbar></Navbar>
+
+  <div v-if="pending">Loading...</div>
+  <div v-else-if="error">Error: {{ error.message }}</div>
+
+  <div v-else>
+
+    <div class="teacher-body">
+
+      <div class="personal-info">
+        <h1 class="title">{{teacher.data.name}} {{teacher.data.surname}}</h1>
+        <h2 class="subtitle">{{teacher.data.qualification}}</h2>
+      </div>
+
+      <div class="main-information">
+
+        <img class="teacher-profile-picture" :src="teacher.data.photos[0].path" :alt="teacher.data.name + ' ' + teacher.data.surname + ' picture'" />
+
+        <div class="information-text certificate">
+          <p class="description" style="font-style: italic">{{teacher.data.description}}</p>
+          <div class="education-certification-wrapper">
+            <h3 style="font-weight: 700">Education & Certifications:</h3>
+            <ul>
+              <li class="certification" v-for="c in teacher.data.cv.education">{{c}}</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="information-text skills">
+          <h3 style="font-weight: 700">Main Expertise:</h3>
+          <ul>
+            <li class="certification" v-for="e in teacher.data.cv.skills">{{e}}</li>
+          </ul>
+        </div>
+
+        <div class="photos-wrapper" v-if="extra_photos.length !== 0">
+          <div class="photos" v-for="photo in extra_photos" :key="photo">
+            <img class="extra-teacher-photos" :src="photo.path" :alt="teacher.data.name + ' ' + teacher.data.surname + ' at work.'"/>
+          </div>
+        </div>
+
+        <div v-else class="placeholder"></div>
+
+      </div>
+
+      <h2 class="learn-with-teacher">Learn with {{teacher.data.name}}</h2>
+
+      <div class="related-activities">
+        <ClickableCard
+            v-for="activity in teacher.data.Activities"
+            :key="activity.id"
+            :img_src="activity.photos[0].path"
+            :to="'/activities/'+activity.name.toLowerCase()+ '-' + activity.id"
+            :label="activity.name">
+        </ClickableCard>
+      </div>
+
+      <div class="button-wrapper">
+        <InteractiveButton label="Back to All Teachers" to="/allTeachers"></InteractiveButton>
+      </div>
+
+    </div>
+  </div>
+
+  <Footer></Footer>
+
+</template>
+
+
+<style scoped>
+
+  .teacher-body {
+    min-height: 88vh;
+    position: relative;
+    background-color: rgba(230, 218, 248, 0.1);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 0 0 100px;
+    box-sizing: border-box;
+    gap: 69px;
+  }
+
+  .personal-info {
+    display: flex;
+    height: fit-content;
+    padding: 15px 397px;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    align-self: stretch;
+  }
+
+  .title{
+    color: var(--Black);
+    min-width: 476px;
+    text-align: center;
+    font-size: 66px;
+    font-style: normal;
+    font-weight: 700;
+  }
+
+  .subtitle {
+    min-width: 476px;
+    color: var(--Black);
+    text-align: center;
+    font-size: 23px;
+    font-style: normal;
+    font-weight: 600;
+  }
+
+  .main-information{
+    position: relative;
+    max-width: 1060px;
+    width: 90%;
+    height: min-content;
+    text-align: left;
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    grid-template-rows: auto auto;
+    row-gap: 40px;
+    column-gap: 5px;
+    font-size: var(--font-size-2xl);
+  }
+
+  .certificate{
+    grid-column: 2;
+    grid-row: 1;
+    min-width: 600px;
+    margin-left: 40px;
+    position: static;
+    height: auto;
+  }
+
+  .information-text{
+    color: #000;
+    font-size: 21px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 30px;
+  }
+
+  .description{
+    margin-bottom: 20px;
+  }
+
+  .certification{
+    margin: 0;
+    font-size: inherit;
+    padding-left: var(--padding-9xl);
+  }
+
+  .skills{
+    grid-column: 1;
+    grid-row: 2;
+    max-width: 460px;
+    position: static;
+    line-height: 30px;
+    text-align: right;
+    display: inline-block;
+  }
+
+  .teacher-profile-picture{
+    grid-column: 1;
+    grid-row: 1;
+    position: static;
+    border-radius: var(--br-xl);
+    width: 266px;
+    height: 325px;
+    object-fit: cover;
+    object-position: 0 2px;
+  }
+
+  .placeholder{
+    width:460px;
+    height: 260px;
+    grid-row: 2;
+    grid-column: 2;
+  }
+
+  .photos-wrapper{
+    grid-column: 2;
+    grid-row: 2;
+    justify-content: center;
+    position: static;
+    right: 150px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    height: min-content;
+  }
+
+  .photos{
+    flex: none;
+  }
+
+  .extra-teacher-photos{
+    position: relative;
+    border-radius: var(--br-xl);
+    width: 178px;
+    height: 260px;
+    object-fit: cover;
+  }
+
+  .learn-with-teacher{
+    max-width: 838px;
+    height: fit-content;
+    color: #000;
+    text-align: center;
+    font-size: 36px;
+    font-style: italic;
+    font-weight: 700;
+    line-height: normal;
+  }
+
+  .related-activities{
+    width: 80%;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, 300px);
+    justify-content: center;
+    gap: 72px;
+    margin-bottom: 30px;
+  }
+
+  .button-wrapper{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    height: fit-content;
+  }
+  
+  @media (max-width: 1000px) {
+
+    .personal-info{
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      margin-top: 15px;
+      padding: 0;
+    }
+
+    .title{
+      font-size: 45px;
+    }
+
+    .subtitle {
+      font-size: 17px;
+    }
+
+    .information-text {
+      font-size: 15px;
+    }
+
+    .description{
+      text-align: center;
+    }
+
+    .certification{
+      padding: 0;
+      margin-left: 30px;
+    }
+
+    .main-information{
+      top: -60px;
+      display: grid;
+      grid-template-columns: 1fr !important;
+      grid-auto-rows: auto;
+      gap: 10px;
+    }
+
+    .teacher-profile-picture{
+      grid-column: 1;
+      grid-row: 1;
+      position: relative;
+      height: auto;
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+      scale: 0.8;
+    }
+
+    .education-certification-wrapper{
+      width: fit-content;
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .certificate{
+      grid-column: 1;
+      grid-row: 2;
+      position: static;
+      height: auto;
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+      width: 86%;
+    }
+
+    .skills{
+      grid-column: 1;
+      grid-row: 3;
+      position: static;
+      height: auto;
+      text-align: left;
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+      margin-bottom: 20px;
+      width: 86%;
+    }
+
+    .photos-wrapper {
+      grid-column: 1;
+      grid-row: 4;
+      position: static;
+      height: auto;
+      justify-content: center;
+      right: 0;
+      padding-right: 15px;
+      padding-left: 15px;
+    }
+
+    .placeholder{
+      grid-row: 4;
+      position: static;
+      height: auto;
+      grid-column: 1;
+      width: 86%;
+    }
+
+    .learn-with-teacher{
+      margin-top: -100px;
+      font-size: 30px;
+    }
+
+    .related-activities{
+      width: fit-content;
+      margin-right: auto;
+      margin-left: auto;
+      gap: 45px;
+    }
+  }
+
+</style>

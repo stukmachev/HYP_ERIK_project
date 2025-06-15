@@ -1,0 +1,324 @@
+.hero {
+    display: flex;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+    flex-direction: row;
+}
+
+.hero__content {
+    flex: 0.7;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 1vw;
+    background-color: #f7f0e8;
+    box-sizing: border-box;
+}
+
+.hero__title {
+    color: #534545;
+    font-size: clamp(2.5rem, 6vw, 85px);
+    font-style: normal;
+    font-weight: 600;
+    line-height: normal;
+    margin-left: 1rem;
+    white-space: nowrap;
+}
+
+.hero__subtitle {
+    color: #534545;
+    font-size: clamp(1.5rem, 4vw, 50px);
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    margin-top: 1.5rem;
+    margin-left: 10rem;
+    transition: margin 0.3s ease, text-align 0.3s ease;
+    white-space: nowrap;
+}
+
+.hero__button {
+    margin-top: 2rem;
+    margin-left: 2rem;
+    align-self: center;
+}
+
+.hero__image {
+    flex: 1;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.hero__image::before {
+    content: '';
+    position: absolute;
+    z-index: 2;
+    pointer-events: none;
+    background: linear-gradient(to right, #f7f0e8 10%, rgba(247, 240, 232, 0) 30%);
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.hero__image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 1;
+}
+
+@media (max-width: 768px) {
+    .hero {
+        flex-direction: column;
+        height: auto;
+    }
+
+    .hero__content {
+        width: 100%;
+        padding: 1.5rem;
+        align-items: center;
+        text-align: center;
+    }
+
+    .hero__title {
+        margin-left: 0;
+        font-size: 2rem;
+    }
+
+    .hero__subtitle {
+        margin-left: 0;
+        margin-top: 1rem;
+        font-size: 2rem;
+    }
+
+    .hero__button {
+        margin-left: 0;
+    }
+
+    .hero__image {
+        width: 100vw;
+        margin: 0 calc(-50vw + 50%);
+        height: auto;
+    }
+
+    .hero__image img {
+        width: 100%;
+        height: auto;
+        object-fit: cover;
+        object-position: top;
+    }
+
+    .hero__image::before {
+        background: linear-gradient(to bottom, #f7f0e8 0%, rgba(247, 240, 232, 0) 60%);
+    }
+}
+
+.activity-types {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 28px;
+    padding: 15px 0;
+    background-color: #FCF9FD;
+}
+
+.activity-types .text-wrapper {
+    font-weight: 600;
+    color: #534545;
+    font-size: 40px;
+    text-align: center;
+}
+
+.activity-types .frame {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+    gap: 60px;
+    padding: 0 2rem;
+    width: 100%;
+    max-width: 1200px;
+}
+
+.activity-types .BODY,
+.activity-types .MIND,
+.activity-types .SOUL {
+    width: 149px;
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: inline-block;
+}
+
+.MIND:hover,
+.SOUL:hover,
+.BODY:hover {
+    transform: scale(1.05);
+    cursor: pointer;
+}
+
+.activity-types .body,
+.activity-types .mind,
+.activity-types .soul {
+    width: 149px;
+    height: 149px;
+    object-fit: cover;
+}
+
+.activity-types .div,
+.activity-types .text-wrapper-2,
+.activity-types .text-wrapper-3 {
+    margin-top: 0.75rem;
+    font-weight: 700;
+    font-size: 14px;
+    line-height: normal;
+}
+
+.activity-types .div {
+    color: #1d7d5e;
+}
+
+.activity-types .text-wrapper-2 {
+    color: #275481;
+}
+
+.activity-types .text-wrapper-3 {
+    color: #653f52;
+}
+
+@media (max-width: 768px) {
+    .activity-types .frame {
+        flex-direction: column;
+        align-items: center;
+        gap: 40px;
+    }
+}
+.special-offers {
+    background-color: #FBF9FB;
+    padding: 4rem 2rem;
+    text-align: center;
+}
+
+.special-offers__title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #534545;
+    margin-bottom: 2rem;
+}
+
+.special-offers__grid {
+    display: flex;
+    flex-direction: column;
+    gap: 4rem;
+    max-width: 1000px;
+    margin: 0 auto;
+    align-items: center;
+}
+
+.offer-card {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+.offer-card__container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.offer-card__content-wrapper {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    background-color: #F4ECE3;
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.08);
+    padding: 1rem;
+    width: 100%;
+    max-width: 1000px;
+    gap: 2rem;
+}
+
+.offer-card__image-wrapper {
+    width: 300px;
+    height: 300px;
+    overflow: hidden;
+    flex-shrink: 0;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    z-index: 2;
+}
+
+.offer-card__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.offer-card__content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    position: relative;
+    text-align: left;
+    min-height: 280px;
+    padding: 1rem 1rem 5rem 1rem;
+    box-sizing: border-box;
+}
+
+.offer-card__button-wrapper {
+    position: absolute;
+    bottom: 1rem;
+    right: 1rem;
+}
+
+.offer-card__title {
+    font-size: 1.75rem;
+    font-weight: 800;
+    margin-bottom: 1rem;
+    color: #000;
+}
+
+.offer-card__description {
+    font-size: 1.05rem;
+    margin-bottom: 1.5rem;
+    color: #333;
+}
+
+.special-offers__empty {
+    color: #534545;
+    font-size: 1.2rem;
+    margin-top: 2rem;
+}
+
+@media (max-width: 768px) {
+    .offer-card__content-wrapper {
+        flex-direction: column;
+        align-items: center;
+        padding: 1.5rem;
+    }
+
+    .offer-card__image-wrapper {
+        width: 260px;
+        height: 260px;
+        margin-bottom: 1rem;
+    }
+
+    .offer-card__content {
+        text-align: center;
+        align-items: center;
+        position: static;
+        padding-bottom: 0;
+    }
+
+    .offer-card__button-wrapper {
+        position: static;
+        margin-top: 1.5rem;
+        align-self: center;
+    }
+}
