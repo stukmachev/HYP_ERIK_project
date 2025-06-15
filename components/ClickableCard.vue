@@ -47,7 +47,7 @@ function handleClick() {
 
 <template>
 <div @click="handleClick" class="card-full" :style="card_size">
-  <img :src="img_src" :alt="label" class="card-image" :style="img_size">
+  <img :src="img_src" :alt="label+' picture'" class="card-image" :style="img_size">
   <div class="card-description" :style="desc_size">
     <p>{{label}}</p>
   </div>

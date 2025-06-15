@@ -18,6 +18,7 @@ defineProps({ error: Object })
       <img src="/img/error.png" alt="Meditating Woman" class="error-image" />
 
 
+
     </div>
 
     <Footer />
