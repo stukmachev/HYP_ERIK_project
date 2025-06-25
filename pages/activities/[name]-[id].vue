@@ -70,6 +70,7 @@ const route = useRoute()
 const activity = ref(null)
 
 onMounted(async () => {
+
   try {
     const slug = route.params.id
     const id = slug.split('-').pop()
@@ -114,36 +115,25 @@ onMounted(async () => {
       ...activityData,
       Teachers: teachers
     }
-  console.log(activity.value)
+    console.log(activity.value)
+    useSeoMeta({
+      title: activity.value.name,
+      description: "Page contains information about activity, teachers who teach this activity and timetable",
+    })
   } catch (err) {
     console.error('Error loading activity:', err)
   }
 })
 
-
-
-// 🔧 Утилита: обработка сериализованного JSON поля
-const parsePhotos = (value) => {
-  try {
-    const once = typeof value === 'string' ? JSON.parse(value) : value
-    return typeof once === 'string' ? JSON.parse(once) : once
-  } catch {
-    return []
-  }
-}
-
-// 🔧 Утилита: получить путь к фото занятия
 const getImageUrl = (path) => {
   return path ? `/img/activities/${path.split('/').pop()}` : ''
 }
 
-// 🔧 Утилита: получить изображение преподавателя
 const getTeacherImage = (name) => {
   const lower = name.toLowerCase()
   return `/img/teachers/${lower}1.png`
 }
 
-// 🔧 Утилита: определение картинки по типу комнаты
 const roomImageMap = {
   ashtanga: 'ashtanga-room.jpg',
   breath: 'breath-room.jpg',
