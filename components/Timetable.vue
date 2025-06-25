@@ -17,9 +17,8 @@
     </table>
   </div>
   <div class="timetable-button-wrapper">
-    <NuxtLink to="/activities" class="yoga-button">
-      Other Yoga Styles
-    </NuxtLink>
+    <InteractiveButton label="Other Yoga Styles" to="/activities" class="yoga-button">
+    </InteractiveButton>
   </div>
 
 </template>
