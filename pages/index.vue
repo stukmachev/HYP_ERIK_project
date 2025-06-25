@@ -47,7 +47,9 @@
   <section class="special-offers">
     <h2 class="special-offers__title">Special Offers</h2>
 
-    <div v-if="offers.length > 0" class="special-offers__grid">
+    <div v-if="pending" class="loading">Loading...</div>
+
+    <div v-else-if="offers.length > 0" class="special-offers__grid">
       <div v-for="offer in offers" :key="offer.id" class="offer-card">
         <div class="offer-card__container">
           <div class="offer-card__content-wrapper">
@@ -57,8 +59,10 @@
             <div class="offer-card__content">
               <p class="offer-card__description" v-html="offer.promotional_text"></p>
               <div class="offer-card__button-wrapper">
-                <InteractiveButton :to="`/activities/${offer.name.toLowerCase().trim().replace(/\s+/g, '-').replace(/[^\w-]/g, '')}-${offer.id}`"
-                                             label="See Full Program" />
+                <InteractiveButton
+                    :to="`/activities/${offer.name.toLowerCase().trim().replace(/\s+/g, '-').replace(/[^\w-]/g, '')}-${offer.id}`"
+                    label="See Full Program"
+                />
               </div>
             </div>
           </div>
@@ -69,6 +73,7 @@
     <div v-else class="special-offers__empty">
       Come back later, new offers will appear soon!
     </div>
+
   </section>
 
   <Footer />
@@ -76,36 +81,49 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import { useNuxtApp } from '#app'
 
 interface Offer {
   id: number
   name: string
-  photos: string | { path: string, priority: number }[]
+  photos: { path: string, priority: number }[]
   promotional_text: string
 }
 
 const offers = ref<Offer[]>([])
+const { $supabase } = useNuxtApp()
+
+const pending = ref(true)
 
 onMounted(async () => {
   try {
-    const response = await fetch('http://localhost:8080/api/v1/activities?highlighted=true&limit=2')
-    const result = await response.json()
-    offers.value = result.data
+    pending.value = true
+    const { data, error } = await $supabase
+        .from('Activities')
+        .select('id, name, photos, promotional_text')
+        .eq('highlighted', true)
+        .order('name', { ascending: true })
+        .limit(2)
+
+    if (error) throw error
+
+    offers.value = (data ?? []).map(activity => ({
+      ...activity,
+      photos: Array.isArray(activity.photos) ? activity.photos : []
+    }))
   } catch (error) {
-    console.error("Failed to fetch offers:", error)
+    console.error('Failed to fetch offers:', error)
+  } finally {
+    pending.value = false
   }
 })
 
-function getPriorityOneImage(photos: string | { path: string, priority: number }[]): string {
-  try {
-    const parsed = Array.isArray(photos) ? photos : JSON.parse(photos)
-    const found = parsed.find((p: any) => p.priority === 1)
-    return found?.path || ''
-  } catch (e) {
-    console.error("Invalid photo data:", photos)
-    return ''
-  }
+
+function getPriorityOneImage(photos: { path: string, priority: number }[]): string {
+  const found = photos.find(p => p.priority === 1)
+  return found?.path || ''
 }
 </script>
+
 
 <style scoped src="@/assets/index.css"></style>

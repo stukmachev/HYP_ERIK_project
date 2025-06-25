@@ -60,9 +60,12 @@
 import Navbar from '@/components/Navbar.vue'
 import Footer from '@/components/Footer.vue'
 import Timetable from '@/components/Timetable.vue'
+
 import { useRoute } from 'vue-router'
 import { ref, onMounted } from 'vue'
+import { useNuxtApp } from '#app'
 
+const { $supabase } = useNuxtApp()
 const route = useRoute()
 const activity = ref(null)
 
@@ -70,23 +73,77 @@ onMounted(async () => {
   try {
     const slug = route.params.id
     const id = slug.split('-').pop()
-    const res = await fetch(`http://localhost:8080/api/v1/activities/${id}`)
-    const json = await res.json()
-    activity.value = json.data
+
+    // First query: fetch activity by ID
+    const { data: activityData, error: activityError } = await $supabase
+        .from('Activities')
+        .select('*')
+        .eq('id', id)
+        .single()
+
+    if (activityError) throw activityError
+    if (!activityData) throw new Error(`Activity with id ${id} not found`)
+
+    // Second query: fetch teachers and their timetable from join table
+    const { data: linkData, error: linkError } = await $supabase
+        .from('TeachersActivity')
+        .select(`
+        timetable,
+        Teachers (
+          id,
+          name,
+          surname,
+          photos
+        )
+      `)
+        .eq('activity_id', id)
+
+    if (linkError) throw linkError
+
+    // Extract and attach timetable
+    const teachers = linkData
+        .filter(item => item.Teachers) // only valid links
+        .map(item => ({
+          ...item.Teachers,
+          timetable: item.timetable,
+          photos: Array.isArray(item.Teachers.photos) ? item.Teachers.photos : []
+        }))
+
+    // Merge into one object
+    activity.value = {
+      ...activityData,
+      Teachers: teachers
+    }
+  console.log(activity.value)
   } catch (err) {
     console.error('Error loading activity:', err)
   }
 })
 
+
+
+// 🔧 Утилита: обработка сериализованного JSON поля
+const parsePhotos = (value) => {
+  try {
+    const once = typeof value === 'string' ? JSON.parse(value) : value
+    return typeof once === 'string' ? JSON.parse(once) : once
+  } catch {
+    return []
+  }
+}
+
+// 🔧 Утилита: получить путь к фото занятия
 const getImageUrl = (path) => {
   return path ? `/img/activities/${path.split('/').pop()}` : ''
 }
 
+// 🔧 Утилита: получить изображение преподавателя
 const getTeacherImage = (name) => {
   const lower = name.toLowerCase()
   return `/img/teachers/${lower}1.png`
 }
 
+// 🔧 Утилита: определение картинки по типу комнаты
 const roomImageMap = {
   ashtanga: 'ashtanga-room.jpg',
   breath: 'breath-room.jpg',
@@ -114,9 +171,8 @@ const getRoomImage = () => {
   }
   return '/img/activities/rooms/default.jpg'
 }
-
-
 </script>
+
 
 <style scoped>
 
@@ -262,8 +318,8 @@ const getRoomImage = () => {
   color: #222;
 }
 
-
 .loading {
+  font-family: "Montserrat", sans-serif;
   text-align: center;
   font-size: 18px;
   padding: 40px;

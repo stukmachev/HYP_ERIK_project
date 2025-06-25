@@ -1,63 +1,65 @@
 <script setup lang="ts">
+import Navbar from "@/components/Navbar.vue";
+import Footer from "@/components/Footer.vue";
+import { ref } from 'vue';
+import { useNuxtApp, useSeoMeta } from '#app'
 
-  import Navbar from "@/components/Navbar.vue";
-  import Footer from "@/components/Footer.vue";
+const { $supabase } = useNuxtApp()
 
-  //TODO: Write a good error message
+const formSubmitted = ref(false)
+const fullname = ref('')
+const email = ref('')
+const message = ref('')
+const status = ref(
+    'Your message has found its way to us.\n' +
+    'Thank you for sharing your energy —\n' +
+    'we\'ll respond with care.'
+)
 
-  import { ref } from 'vue';
-
-  const formSubmitted = ref(false);
-  const fullname = ref('');
-  const email = ref('');
-  const message = ref('');
-  const status = ref(
-      'Your message has found its way to us.\n' +
-      'Thank you for sharing your energy —\n' +
-      'we\'ll respond with care.'
-  );
-
-  async function submitForm() {
-
-    try {
-      const response = await fetch('http://localhost:8080/api/v1/requests/create', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
+// Function to submit contact form to Supabase 'requests' table
+async function submitForm() {
+  try {
+    const { error } = await $supabase
+        .from('Requests')
+        .insert([{
           fullname: fullname.value,
           email: email.value,
-          text: message.value,
-        }),
-      });
-     if (!response.ok) {
-        throw new Error('Network response was not ok');
-     }
-     else if(response.ok){
+          text: message.value
+        }])
 
-     }
-   } catch (error) {
-      console.error('Form submission failed:', error);
-      status.value = 'Some error interrupted your flow of energy —\n try again later.';
-   }
-    formSubmitted.value = true;
+    if (error) {
+      console.error('Form submission failed:', error)
+      status.value = 'Some error interrupted your flow of energy —\n try again later.'
+    } else {
+      status.value = 'Your message has found its way to us.\n' +
+          'Thank you for sharing your energy —\n' +
+          'we\'ll respond with care.'
+    }
+
+  } catch (error) {
+    console.error('Unexpected error:', error)
+    status.value = 'Some error interrupted your flow of energy —\n try again later.'
   }
 
-  function changeState(){
-    formSubmitted.value = false;
-    message.value = '';
-    status.value = 'Your message has found its way to us.\n' +
-        'Thank you for sharing your energy —\n' +
-        'we\'ll respond with care.';
-  }
+  formSubmitted.value = true
+}
 
-  useSeoMeta({
-    title: "Contact Us",
-    description: "In this page user can send messages directly to Yoga House.",
-  })
+// Reset the form state
+function changeState() {
+  formSubmitted.value = false
+  message.value = ''
+  status.value = 'Your message has found its way to us.\n' +
+      'Thank you for sharing your energy —\n' +
+      'we\'ll respond with care.'
+}
 
+// SEO metadata
+useSeoMeta({
+  title: "Contact Us",
+  description: "In this page user can send messages directly to Yoga House.",
+})
 </script>
+
 
 <template>
 

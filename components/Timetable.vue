@@ -53,7 +53,7 @@
 }
 }
 
-    const timetable = teacher?.TeachersActivities?.timetable
+    const timetable = teacher?.timetable
     if (timetable) {
       try {
         const parsed = typeof timetable === 'string' ? JSON.parse(timetable) : timetable

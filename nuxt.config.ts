@@ -1,12 +1,11 @@
 export default defineNuxtConfig({
   compatibilityDate: '2024-11-01',
   devtools: { enabled: true },
+
   app: {
     head: {
       title: 'Yoga House',
-      htmlAttrs: {
-        lang: 'en',
-      },
+      htmlAttrs: { lang: 'en' },
       link: [
         { rel: 'icon', type: 'image/jpg', href: '/logo.jpg' },
         {
@@ -17,22 +16,14 @@ export default defineNuxtConfig({
     }
   },
 
+  css: ['~/assets/global.css'],
+  modules: ['@nuxt/image'],
+
+  // 🆕 добавляем публичные переменные для Supabase
   runtimeConfig: {
     public: {
-      apiBase: '/api/v1'
+      supabaseUrl: process.env.SUPABASE_URL,
+      supabaseKey: process.env.SUPABASE_ANON_KEY
     }
-  },
-
-  nitro: {
-    devProxy: {
-      '/api/v1': {
-        target: 'http://localhost:8080',
-        changeOrigin: true,
-        prependPath: false
-      }
-    }
-  },
-
-  css: ['~/assets/global.css'],
-  modules: ['@nuxt/image']
+  }
 })

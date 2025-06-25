@@ -1,31 +1,76 @@
-<script setup lang="js">
+<script setup>
+import ClickableCard from "~/components/ClickableCard.vue"
+import { useRoute } from 'vue-router'
+import { ref, onMounted } from 'vue'
+import { useNuxtApp, useSeoMeta } from '#app'
 
-  import ClickableCard from "~/components/ClickableCard.vue";
+const { $supabase } = useNuxtApp()
+const route = useRoute()
 
-  const route = useRoute();
+const rawSlug = route.params.slug
+const id = rawSlug.split('-').pop()
 
-  const rawSlug = route.params.slug;
-  console.log(rawSlug);
+const teacher = ref(null)
+const teacherActivities = ref([])
+const error = ref(null)
+const pending = ref(true)
+const extra_photos = ref([])
 
-  const id = rawSlug.split('-').pop();
-  console.log(id)
+onMounted(async () => {
+  pending.value = true
+  try {
+    // First: load teacher
+    const { data: teacherData, error: teacherError } = await $supabase
+        .from('Teachers')
+        .select('*')
+        .eq('id', id)
+        .single()
 
-  const {data: teacher, pending, error} = await useFetch('http://localhost:8080/api/v1/teachers/' + id);
+    if (teacherError) throw teacherError
+    if (!teacherData) throw new Error(`Teacher with id ${id} not found`)
+    teacher.value = teacherData
 
-  let extra_photos = [];
+    // Load activities for this teacher from TeachersActivity
+    const { data: activityJoinData, error: joinError } = await $supabase
+        .from('TeachersActivity')
+        .select(`
+        Activities (
+          id,
+          name,
+          description,
+          photos,
+          highlighted
+        )
+      `)
+        .eq('teacher_id', id)
 
-  for (let p = 1; p < teacher.value.data.photos.length; p++) {
-    extra_photos.push(teacher.value.data.photos[p]);
+    if (joinError) throw joinError
+
+    // Flatten the join result into a list of activities
+    teacherActivities.value = activityJoinData
+        .map(item => item.Activities)
+        .filter(Boolean)
+
+    // Optional: prepare extra photos
+    extra_photos.value = Array.isArray(teacherData.photos)
+        ? teacherData.photos.slice(1)
+        : []
+
+    // SEO
+    useSeoMeta({
+      title: `${teacher.value.name} ${teacher.value.surname}`,
+      description: `This is ${teacher.value.name} ${teacher.value.surname}'s page, where their courses, experiences and skills can be found.`,
+    })
+  } catch (err) {
+    console.error('Error loading teacher or activities:', err)
+    error.value = err
+  } finally {
+    pending.value = false
   }
-
-  useSeoMeta({
-    title: teacher.value.data.name + " " + teacher.value.data.surname,
-    description: "This is " + teacher.value.data.name + " " + teacher.value.data.surname + "'s page, where their courses, experiences and skills can be found.",
-  })
-
-  //TODO: create fake experiences for teachers
-  //TODO: create more fake images for teachers
+})
 </script>
+
+
 
 <template>
 
@@ -33,7 +78,7 @@
 
   <Navbar></Navbar>
 
-  <div v-if="pending">Loading...</div>
+  <div v-if="pending" class="loading">Loading...</div>
   <div v-else-if="error">Error: {{ error.message }}</div>
 
   <div v-else>
@@ -41,20 +86,20 @@
     <div class="teacher-body">
 
       <div class="personal-info">
-        <h1 class="title">{{teacher.data.name}} {{teacher.data.surname}}</h1>
-        <h2 class="subtitle">{{teacher.data.qualification}}</h2>
+        <h1 class="title">{{teacher.name}} {{teacher.surname}}</h1>
+        <h2 class="subtitle">{{teacher.qualification}}</h2>
       </div>
 
       <div class="main-information">
 
-        <img class="teacher-profile-picture" :src="teacher.data.photos[0].path" :alt="teacher.data.name + ' ' + teacher.data.surname + ' picture'" />
+        <img class="teacher-profile-picture" :src="teacher.photos[0].path" :alt="teacher.name + ' ' + teacher.surname + ' picture'" />
 
         <div class="information-text certificate">
-          <p class="description" style="font-style: italic">{{teacher.data.description}}</p>
+          <p class="description" style="font-style: italic">{{teacher.description}}</p>
           <div class="education-certification-wrapper">
             <h3 style="font-weight: 700">Education & Certifications:</h3>
             <ul>
-              <li class="certification" v-for="c in teacher.data.cv.education">{{c}}</li>
+              <li class="certification" v-for="c in teacher.cv.education">{{c}}</li>
             </ul>
           </div>
         </div>
@@ -62,13 +107,13 @@
         <div class="information-text skills">
           <h3 style="font-weight: 700">Main Expertise:</h3>
           <ul>
-            <li class="certification" v-for="e in teacher.data.cv.skills">{{e}}</li>
+            <li class="certification" v-for="e in teacher.cv.skills">{{e}}</li>
           </ul>
         </div>
 
         <div class="photos-wrapper" v-if="extra_photos.length !== 0">
           <div class="photos" v-for="photo in extra_photos" :key="photo">
-            <img class="extra-teacher-photos" :src="photo.path" :alt="teacher.data.name + ' ' + teacher.data.surname + ' at work.'"/>
+            <img class="extra-teacher-photos" :src="photo.path" :alt="teacher.name + ' ' + teacher.surname + ' at work.'"/>
           </div>
         </div>
 
@@ -76,11 +121,11 @@
 
       </div>
 
-      <h2 class="learn-with-teacher">Learn with {{teacher.data.name}}</h2>
+      <h2 class="learn-with-teacher">Learn with {{teacher.name}}</h2>
 
       <div class="related-activities">
         <ClickableCard
-            v-for="activity in teacher.data.Activities"
+            v-for="activity in teacherActivities"
             :key="activity.id"
             :img_src="activity.photos[0].path"
             :to="'/activities/'+activity.name.toLowerCase()+ '-' + activity.id"
@@ -96,7 +141,6 @@
   </div>
 
   <Footer></Footer>
-
 </template>
 
 
@@ -376,6 +420,13 @@
       margin-left: auto;
       gap: 45px;
     }
+  }
+
+  .loading {
+    font-family: "Montserrat", sans-serif;
+    text-align: center;
+    font-size: 18px;
+    padding: 40px;
   }
 
 </style>

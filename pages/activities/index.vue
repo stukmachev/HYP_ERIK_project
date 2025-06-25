@@ -19,9 +19,8 @@
         v-if="selectedCategory !== 'all'"
         :class="['category-banner', selectedCategory]"
     >
-      <p>{{ categoryData?.data?.description || '...' }}</p>
+      <p>{{ categoryData?.description || '...' }}</p>
     </div>
-
     <transition-group name="fade" tag="div" class="activity-grid">
       <ClickableCard
           v-for="activity in filteredActivities"
@@ -37,15 +36,17 @@
 
 <script setup>
 import { useRoute, useRouter } from 'vue-router'
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
 import Navbar from '@/components/Navbar.vue'
 import Footer from '@/components/Footer.vue'
 import ClickableCard from '@/components/ClickableCard.vue'
-import { useFetch } from '#app'
+import { useNuxtApp } from '#app'
 
+const { $supabase } = useNuxtApp()
 const route = useRoute()
 const router = useRouter()
 
+// Категории (можно тоже грузить из Supabase, но пока оставим вручную)
 const categoryMap = [
   { key: 'body', id: 1, label: 'Body' },
   { key: 'soul', id: 2, label: 'Soul' },
@@ -66,17 +67,61 @@ const categoryId = computed(() =>
     categoryMap.find(c => c.key === selectedCategory.value)?.id
 )
 
-const { data: categoryData } = await useFetch(() =>
-    categoryId.value ?
-        `http://localhost:8080/api/v1/categories/${categoryId.value}` :
-        null
-)
+// Данные
+const categoryData = ref(null)
+const allActivities = ref([])
 
-const { data: response } = await useFetch('http://localhost:8080/api/v1/activities')
-const safeActivities = computed(() => Array.isArray(response.value?.data) ? response.value.data : [])
+// Загрузка данных
+onMounted(async () => {
+  try {
+
+    const { data: activities, error: actErr } = await $supabase
+        .from('Activities')
+        .select('*')
+        .order('name', { ascending: true })
+
+    if (actErr) throw actErr
+    allActivities.value = activities
+
+    if (categoryId.value) {
+      const { data: cat, error: catErr } = await $supabase
+          .from('Categories')
+          .select('*')
+          .eq('id', categoryId.value)
+          .single()
+
+      if (catErr) throw catErr
+      categoryData.value = cat
+    }
+    console.log(categoryData)
+  } catch (err) {
+    console.error('Data load error:', err)
+  }
+})
+watch(categoryId, async (newId) => {
+  if (!newId) {
+    categoryData.value = null
+    return
+  }
+
+  try {
+    const { data: cat, error: catErr } = await $supabase
+        .from('Categories')
+        .select('*')
+        .eq('id', newId)
+        .single()
+
+    if (catErr) throw catErr
+    categoryData.value = cat
+  } catch (err) {
+    console.error('Failed to load category data:', err)
+  }
+})
+
+// Category filter
 const filteredActivities = computed(() => {
-  if (selectedCategory.value === 'all') return safeActivities.value
-  return safeActivities.value.filter(a => a.activity_category_id === categoryId.value)
+  if (selectedCategory.value === 'all') return allActivities.value
+  return allActivities.value.filter(a => a.activity_category_id === categoryId.value)
 })
 </script>
 
