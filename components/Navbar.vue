@@ -27,25 +27,29 @@ onUnmounted(() => {
 
 <template>
   <nav class="navbar">
-      <div class="nav-links">
-        <router-link to="/" class="logo-link">
-          <img class="logo" src="/logo.jpg" alt="home link" />
-        </router-link>
-        <router-link class="tab-link" to="/aboutUs">About Yoga House</router-link>
-        <router-link class="tab-link" to="/allTeachers">Our Teachers</router-link>
-        <router-link class="tab-link" to="/activities">Our Activities</router-link>
-        <router-link class="tab-link" to="/contactUs">Contact Us</router-link>
-      </div>
+    <div class="nav-links">
+      <router-link to="/" class="logo-link">
+        <img class="logo" src="/logo.jpg" alt="home link" />
+      </router-link>
+      <router-link class="tab-link" to="/aboutUs">About Yoga House</router-link>
+      <router-link class="tab-link" to="/allTeachers">Our Teachers</router-link>
+      <router-link class="tab-link" to="/activities">Our Activities</router-link>
+      <router-link class="tab-link" to="/contactUs">Contact Us</router-link>
+    </div>
 
     <!-- Burger Icon -->
     <div class="nav-burger">
-      <router-link to="/" class="logo-link">
-        <img class="logo" src="/logo.jpg" alt="Logotype of the yoga center" />
-      </router-link>
-      <div class="burger" @click="toggleMenu">
-        <div class="line"></div>
-        <div class="line"></div>
-        <div class="line"></div>
+      <div class="burger-left">
+        <router-link to="/" class="logo-link">
+          <img class="logo" src="/logo.jpg" alt="Logotype of the yoga center" />
+        </router-link>
+      </div>
+      <div class="burger-right">
+        <div class="burger" @click="toggleMenu">
+          <div class="line"></div>
+          <div class="line"></div>
+          <div class="line"></div>
+        </div>
       </div>
     </div>
   </nav>
@@ -97,11 +101,23 @@ onUnmounted(() => {
 }
 
 .nav-burger {
+  width: 100%;
   height: 91px;
   display: none;
   align-items: center;
-  padding: 0 150px;
+  padding: 0 20px;
   justify-content: space-between;
+  box-sizing: border-box;
+}
+
+.burger-left,
+.burger-right {
+  display: flex;
+  align-items: center;
+}
+
+.logo {
+  height: 55px; /* немного уменьшить для мобильного */
 }
 
 .burger {
