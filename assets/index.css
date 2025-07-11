@@ -20,15 +20,12 @@
     align-items: flex-start;
     padding: 1vw;
     background-color: #f7f0e8;
-    box-sizing: border-box;
 }
 
 .hero__title {
     color: #534545;
     font-size: clamp(2.5rem, 6vw, 85px);
-    font-style: normal;
     font-weight: 600;
-    line-height: normal;
     margin-left: 1rem;
     white-space: nowrap;
 }
@@ -36,7 +33,6 @@
 .hero__subtitle {
     color: #534545;
     font-size: clamp(1.5rem, 4vw, 50px);
-    font-style: normal;
     font-weight: 400;
     line-height: normal;
     margin-top: 1.5rem;
@@ -108,8 +104,8 @@
     }
 
     .hero__image {
-        width: 100vw;
-        margin: 0 calc(-50vw + 50%);
+        width: 100%;
+        margin: 0;
         height: auto;
     }
 
@@ -149,6 +145,7 @@
     padding: 0 2rem;
     width: 100%;
     max-width: 1200px;
+    box-sizing: border-box;
 }
 
 .activity-types .BODY,
@@ -157,7 +154,6 @@
     width: 149px;
     text-align: center;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
-    display: inline-block;
 }
 
 .MIND:hover,
@@ -181,7 +177,6 @@
     margin-top: 0.75rem;
     font-weight: 700;
     font-size: 14px;
-    line-height: normal;
 }
 
 .activity-types .div {
@@ -203,6 +198,7 @@
         gap: 40px;
     }
 }
+
 .special-offers {
     background-color: #FBF9FB;
     padding: 4rem 2rem;
@@ -239,7 +235,6 @@
 
 .offer-card__content-wrapper {
     display: flex;
-    flex-direction: row;
     align-items: center;
     background-color: #F4ECE3;
     box-shadow: 0 6px 24px rgba(0, 0, 0, 0.08);
@@ -255,7 +250,6 @@
     overflow: hidden;
     flex-shrink: 0;
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-    z-index: 2;
 }
 
 .offer-card__image {
@@ -271,10 +265,8 @@
     flex-direction: column;
     justify-content: flex-start;
     position: relative;
-    text-align: left;
     min-height: 280px;
-    padding: 1rem 1rem 5rem 1rem;
-    box-sizing: border-box;
+    padding: 1rem;
 }
 
 .offer-card__button-wrapper {
