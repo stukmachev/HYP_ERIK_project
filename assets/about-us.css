@@ -150,13 +150,13 @@ html, body {
 
 .contact-title {
     font-weight: 600;
-    font-size: 32px;
+    font-size: clamp(20px, 4vw, 32px);
     color: #1a1a1a;
     margin-bottom: 16px;
 }
 
 .contact-text {
-    font-size: 20px;
+    font-size: clamp(16px, 2.5vw, 20px);
     color: #333333;
     margin-bottom: 32px;
     line-height: 1.6;
@@ -191,6 +191,12 @@ html, body {
     transform: scale(1.05);
     color: #a67ed4;
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.approach-intro,
+.approach-description,
+.approach-list li {
+    font-size: clamp(16px, 2.2vw, 25px);
 }
 
 @media (max-width: 768px) {
