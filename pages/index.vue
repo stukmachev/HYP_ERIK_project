@@ -91,6 +91,12 @@ interface Offer {
 }
 
 const offers = ref<Offer[]>([])
+
+useSeoMeta({
+  title: "Home",
+  description: "Main page with promotions",
+})
+
 const { $supabase } = useNuxtApp()
 
 const pending = ref(true)

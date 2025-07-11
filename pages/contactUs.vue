@@ -41,7 +41,7 @@ async function submitForm() {
     status.value = 'Some error interrupted your flow of energy —\n try again later.'
   }
 
-  formSubmitted.value = true
+  formSubmitted.value = true;
 }
 
 // Reset the form state
@@ -137,12 +137,6 @@ useSeoMeta({
 </template>
 
 <style scoped>
-
-  /*TODO: put label css in global*/
-
-  label, button, input, textarea {
-    font-family: var(--font-montserrat);
-  }
 
   .contact-body {
     min-height: 88vh;
@@ -259,7 +253,8 @@ useSeoMeta({
   }
 
   .clickable-button {
-    width: 310px;
+    max-width: 310px;
+    width: 100%;
     height: 55px;
     flex-shrink: 0;
     background-color: #87609a;
@@ -326,11 +321,11 @@ useSeoMeta({
   @media (max-width: 600px) {
 
     .title{
-      font-size: 46px;
+      font-size: 45px;
     }
 
     .plain-text{
-      font-size: 23px;
+      font-size: 20px;
     }
 
     .form-group {
@@ -350,7 +345,7 @@ useSeoMeta({
     }
 
     .thank-you-text{
-      font-size: 27px;
+      font-size: 24px;
     }
     
   }

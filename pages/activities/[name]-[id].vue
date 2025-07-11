@@ -115,7 +115,6 @@ onMounted(async () => {
       ...activityData,
       Teachers: teachers
     }
-    console.log(activity.value)
     useSeoMeta({
       title: activity.value.name,
       description: "Page contains information about activity, teachers who teach this activity and timetable",

@@ -8,8 +8,17 @@ const props = defineProps({
   to: {
     type: String,
     required: true
+  },
+  width: {
+    type: String,
+    required: false,
+    default: 310
   }
-})
+});
+
+const button_width = computed(() => ({
+  width: `${props.width}px`,
+}));
 
 const router = useRouter()
 
@@ -19,12 +28,12 @@ function handleClick() {
 </script>
 
 <template>
-  <button class="interactive-button" @click="handleClick">{{ label }}</button>
+  <button class="interactive-button" :style="button_width" @click="handleClick">{{ label }}</button>
 </template>
 
 <style scoped>
   .interactive-button{
-    width: 310px;
+    /*width: 310px;*/
     height: 55px;
     flex-shrink: 0;
     background-color: #87609a; /*#CDB4DB*/

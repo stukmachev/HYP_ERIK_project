@@ -27,7 +27,8 @@
           :key="activity.id"
           :label="activity.name.toUpperCase()"
           :img_src="`/img/activities/${activity.photos?.[0]?.path?.split('/').pop()}`"
-          :to="'/activities/'+activity.name.toLowerCase()+ '-' + activity.id"      />
+          :to="`/activities/${activity.name.toLowerCase().trim().replace(/\s+/g, '-').replace(/[^\w-]/g, '')}-${activity.id}`"
+      />
     </transition-group>
 
   </div>
@@ -45,6 +46,11 @@ import { useNuxtApp } from '#app'
 const { $supabase } = useNuxtApp()
 const route = useRoute()
 const router = useRouter()
+
+useSeoMeta({
+  title: "Activities",
+  description: "Page contains all activities with filtering by categories",
+})
 
 // Категории (можно тоже грузить из Supabase, но пока оставим вручную)
 const categoryMap = [

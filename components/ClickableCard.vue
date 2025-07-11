@@ -14,11 +14,11 @@ const props = defineProps({
     required: true
   },
   card_width: {
-    required: true,
+    required: false,
     default: 300
   },
   card_height: {
-    required: true,
+    required: false,
     default: 346
   }
 })
@@ -56,7 +56,6 @@ function handleClick() {
 
 <style scoped>
 .card-full{
-  //width: 300px;
   flex-shrink: 0;
   border-radius: 20px;
   overflow: hidden;
@@ -69,14 +68,11 @@ function handleClick() {
 }
 
 .card-image {
-  //height: 300px;
-  //width: 100%;
   display: flex;
   object-fit: cover;
   object-position: top center;
 }
 .card-description{
-  //width: 300px;
   height: 46px;
   flex-shrink: 0;
   background-color: #D5D5D5;

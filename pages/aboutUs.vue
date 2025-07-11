@@ -74,6 +74,11 @@ import approach2 from "@/assets/images/our-approach-2.png";
 import approach3 from "@/assets/images/our-approach-3.png";
 import approach4 from "@/assets/images/our-approach-4.png";
 
+useSeoMeta({
+  title: "About us",
+  description: "Page contains general information about Yoga center",
+})
+
 const galleryImages = [
   { src: approach1, alt: "Yoga woman square" },
   { src: approach2, alt: "White flower scene" },

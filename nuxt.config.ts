@@ -19,7 +19,7 @@ export default defineNuxtConfig({
   css: ['~/assets/global.css'],
   modules: ['@nuxt/image'],
 
-  // 🆕 добавляем публичные переменные для Supabase
+
   runtimeConfig: {
     public: {
       supabaseUrl: process.env.SUPABASE_URL,
