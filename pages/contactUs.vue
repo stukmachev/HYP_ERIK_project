@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup lang="js">
 import Navbar from "@/components/Navbar.vue";
 import Footer from "@/components/Footer.vue";
 import { ref } from 'vue';

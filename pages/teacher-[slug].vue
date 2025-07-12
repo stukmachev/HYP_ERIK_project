@@ -16,13 +16,19 @@ const error = ref(null)
 const pending = ref(true)
 const extra_photos = ref([])
 
-const windowWidth = ref(window.innerWidth);
+const windowWidth = ref(0)
+
+//start value if on server
+if (process.client) {
+  windowWidth.value = window.innerWidth
+}
+
+//responsive size
 const responsiveWidth = computed(() => {
   if (windowWidth.value < 440) {
-    return 300 * (windowWidth.value/440);
-  }
-  else {
-    return 300;
+    return 300 * (windowWidth.value / 440)
+  } else {
+    return 300
   }
 })
 

@@ -12,12 +12,10 @@ defineProps({ error: Object })
     <div class="error-container">
       <div class="error-content">
         <h1>Looks like you took a<br />wrong turn on the path<br />to enlightenment.</h1>
-        <NuxtLink to="/" class="cta-button">Shall we get back on the mat?</NuxtLink>
+        <InteractiveButton label="Shall we get back on the mat?" to="/"></InteractiveButton>
       </div>
 
       <img src="/img/error.png" alt="Meditating Woman" class="error-image" />
-
-
 
     </div>
 
@@ -26,6 +24,7 @@ defineProps({ error: Object })
 </template>
 
 <style scoped>
+
 .error-wrapper {
   display: flex;
   flex-direction: column;
@@ -56,33 +55,10 @@ h1 {
   margin-bottom: 2rem;
 }
 
-.cta-button {
-  display: inline-block;
-  background-color: #87609a;
-  color: white;
-  padding: 0.75rem 1.5rem;
-  border-radius: 10px;
-  font-size: 0.9rem;
-  font-weight: 600;
-  text-decoration: none;
-  transition: background-color 0.3s;
-}
-
-.cta-button:hover {
-  background-color: #87609a;
-}
-
 .error-image {
   max-width: 400px;
   width: 100%;
   margin-top: 2rem;
-}
-
-.inline-icon {
-  width: 20px;
-  height: 20px;
-  margin-left: 8px;
-  vertical-align: middle;
 }
 
 </style>

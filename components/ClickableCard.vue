@@ -14,10 +14,12 @@ const props = defineProps({
     required: true
   },
   card_width: {
+    type: String,
     required: false,
     default: 300
   },
   card_height: {
+    type: String,
     required: false,
     default: 346
   }
