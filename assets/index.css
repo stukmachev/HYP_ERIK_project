@@ -264,15 +264,14 @@
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
-    position: relative;
     min-height: 280px;
     padding: 1rem;
 }
 
 .offer-card__button-wrapper {
-    position: absolute;
-    bottom: 1rem;
-    right: 1rem;
+    position: static;
+    margin-top: auto;
+    align-self: flex-end;
 }
 
 .offer-card__title {
