@@ -1,7 +1,7 @@
 .loading {
     font-family: "Montserrat", sans-serif;
     text-align: center;
-    font-size: 18px;
+    font-size: var(--font-text);
     padding: 40px;
 }
 .hero {
@@ -24,7 +24,7 @@
 
 .hero__title {
     color: #534545;
-    font-size: clamp(2.5rem, 6vw, 85px);
+    font-size: var(--font-big-title);
     font-weight: 600;
     margin-left: 1rem;
     white-space: nowrap;
@@ -32,7 +32,7 @@
 
 .hero__subtitle {
     color: #534545;
-    font-size: clamp(1.5rem, 4vw, 50px);
+    font-size: var(--font-subtitle);
     font-weight: 400;
     line-height: normal;
     margin-top: 1.5rem;
@@ -90,13 +90,11 @@
 
     .hero__title {
         margin-left: 0;
-        font-size: 2rem;
     }
 
     .hero__subtitle {
         margin-left: 0;
         margin-top: 1rem;
-        font-size: 2rem;
     }
 
     .hero__button {
@@ -133,7 +131,6 @@
 .activity-types .text-wrapper {
     font-weight: 600;
     color: #534545;
-    font-size: 40px;
     text-align: center;
 }
 
@@ -176,7 +173,7 @@
 .activity-types .text-wrapper-3 {
     margin-top: 0.75rem;
     font-weight: 700;
-    font-size: 14px;
+    font-size: var(--font-small-text);
 }
 
 .activity-types .div {
@@ -206,7 +203,6 @@
 }
 
 .special-offers__title {
-    font-size: 2.5rem;
     font-weight: 700;
     color: #534545;
     margin-bottom: 2rem;
@@ -274,23 +270,10 @@
     align-self: flex-end;
 }
 
-.offer-card__title {
-    font-size: 1.75rem;
-    font-weight: 800;
-    margin-bottom: 1rem;
-    color: #000;
-}
-
-.offer-card__description {
-    font-size: 1.05rem;
-    margin-bottom: 1.5rem;
-    color: #333;
-}
-
 .special-offers__empty {
     font-family: "Montserrat", sans-serif;
     color: #534545;
-    font-size: 1.2rem;
+    font-size: var(--font-text);
     margin-top: 2rem;
 }
 

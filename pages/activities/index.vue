@@ -52,7 +52,6 @@ useSeoMeta({
   description: "Page contains all activities with filtering by categories",
 })
 
-// Категории (можно тоже грузить из Supabase, но пока оставим вручную)
 const categoryMap = [
   { key: 'body', id: 1, label: 'Body' },
   { key: 'soul', id: 2, label: 'Soul' },
@@ -185,7 +184,7 @@ const filteredActivities = computed(() => {
   margin: 30px auto;
   color: white;
   font-weight: 600;
-  font-size: 20px;
+  font-size: var(--font-medium-text);
   text-align: center;
   width: 80%;
   max-width: 960px;

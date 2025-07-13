@@ -176,7 +176,6 @@ const getRoomImage = () => {
 .header-section {
   display: flex;
   justify-content: space-between;
-  align-items: center;
   margin-bottom: 40px;
   gap: 40px;
 }
@@ -186,16 +185,13 @@ const getRoomImage = () => {
 }
 
 .activity-title {
-  font-size: 32px;
+  font-size: var(--font-small-title);
   font-weight: 700;
-  margin-bottom: 26px;
-  margin-top: 36px;
-
 }
 
 .activity-description {
   font-style: italic;
-  font-size: 18px;
+  font-size: var(--font-text);
   line-height: 1.8;
   margin-top:  40px;
 
@@ -225,7 +221,7 @@ const getRoomImage = () => {
 }
 
 .experience-text h3 {
-  font-size: 26px;
+  font-size: var(--font-sub-subtitle);
   margin-top: 60px;
   font-weight: 600;
 
@@ -235,15 +231,17 @@ const getRoomImage = () => {
   padding-left: 20px;
   line-height: 1.8;
   margin-top: 8px;
+  font-size: var(--font-text);
 }
 
 .experience-text p {
   margin-top: 8px;
-  font-size: 16px;
+  font-size: var(--font-text);
 }
 
 .room-image {
-  flex: 1;
+  flex-shrink: 0;
+  min-width: 300px;
   border-radius: 16px;
   object-fit: cover;
   width: 100%;
@@ -257,7 +255,7 @@ const getRoomImage = () => {
 }
 
 .teachers-section h2 {
-  font-size: 28px;
+  font-size: var(--font-small-subtitle);
   font-weight: 600;
   margin-bottom: 0;
 }
@@ -302,7 +300,7 @@ const getRoomImage = () => {
 
 .teacher-card p {
   font-weight: 700;
-  font-size: 16px;
+  font-size: var(--font-medium-text);
   margin: 8px 0 2px;
   color: #222;
 }
@@ -310,8 +308,33 @@ const getRoomImage = () => {
 .loading {
   font-family: "Montserrat", sans-serif;
   text-align: center;
-  font-size: 18px;
+  font-size: var(--font-text);
   padding: 40px;
 }
+
+@media (max-width: 768px) {
+  .header-section {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .text-section {
+    max-width: 100%;
+    order: 1;
+  }
+
+  .activity-image {
+    width: 90%;
+    margin: 20px 0;
+    order: 2;
+  }
+
+  .activity-description {
+    order: 3;
+    margin-top: 20px;
+  }
+}
+
 
 </style>

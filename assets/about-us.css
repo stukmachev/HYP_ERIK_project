@@ -59,19 +59,19 @@ html, body {
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
     text-align: center;
 
-    font-size: clamp(12px, 1.2vw, 18px);
+    font-size: var(--font-medium-text);
 }
 
 .hero-title {
     font-weight: 600;
     /*font-size: 28px;*/
     color: #1a1a1a;
-    font-size: clamp(18px, 2vw, 28px);
+    font-size: var(--font-sub-subtitle);
     padding-bottom: 1vw;
 }
 
 .hero-description {
-    font-size: clamp(14px, 1.1vw, 18px);
+    font-size: var(--font-medium-text);
     line-height: 1.6;
     font-style: italic;
     color: #333333;
@@ -92,7 +92,7 @@ html, body {
 
 .approach-title {
     font-weight: 600;
-    font-size: 32px;
+    font-size: var(--font-small-subtitle);
     color: #1a1a1a;
     text-align: center;
     margin-bottom: 24px;
@@ -100,7 +100,7 @@ html, body {
 
 .approach-intro,
 .approach-description {
-    font-size: 25px;
+    font-size: var(--font-text);
     color: #333333;
     margin-bottom: 24px;
     line-height: 1.6;
@@ -113,7 +113,7 @@ html, body {
 }
 
 .approach-list li {
-    font-size: 25px;
+    font-size: var(--font-text);
     color: #333333;
     margin-bottom: 12px;
 }
@@ -150,13 +150,13 @@ html, body {
 
 .contact-title {
     font-weight: 600;
-    font-size: clamp(20px, 4vw, 32px);
+    font-size: var(--font-small-subtitle);
     color: #1a1a1a;
     margin-bottom: 16px;
 }
 
 .contact-text {
-    font-size: clamp(16px, 2.5vw, 20px);
+    font-size: var(--font-text);
     color: #333333;
     margin-bottom: 32px;
     line-height: 1.6;
@@ -196,7 +196,7 @@ html, body {
 .approach-intro,
 .approach-description,
 .approach-list li {
-    font-size: clamp(16px, 2.2vw, 25px);
+    font-size: var(--font-text);
 }
 
 @media (max-width: 768px) {

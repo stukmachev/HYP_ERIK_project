@@ -176,14 +176,14 @@ useSeoMeta({
     top: 10px;
     color: var(--Black);
     text-align: center;
-    font-size: 66px;
+    font-size: var(--font-small-title);
     font-style: normal;
     font-weight: 700;
   }
 
   .plain-text{
     color: #000;
-    font-size: 24px;
+    font-size: var(--font-text);
     font-style: normal;
     font-weight: 400;
     line-height: 30px;
@@ -208,7 +208,7 @@ useSeoMeta({
 
   label {
     flex: 1;
-    font-size: 18px;
+    font-size: var(--font-medium-text);
     font-weight: bold;
   }
 
@@ -225,7 +225,7 @@ useSeoMeta({
     border: none;
     background-color: white;
     box-sizing: border-box;
-    font-size: 18px;
+    font-size: var(--font-medium-text);
   }
 
   textarea {
@@ -244,7 +244,7 @@ useSeoMeta({
 
   .thank-you-text {
     color: #000;
-    font-size: 34px;
+    font-size: var(--font-big-text);
     font-style: italic;
     font-weight: 500;
     line-height: normal;
@@ -319,35 +319,14 @@ useSeoMeta({
   }
 
   @media (max-width: 600px) {
-
-    .title{
-      font-size: 45px;
-    }
-
-    .plain-text{
-      font-size: 20px;
-    }
-
     .form-group {
       flex-direction: column;
       align-items: stretch;
     }
 
     label {
-      font-size: 15px;
       margin-bottom: 5px;
     }
-
-    input[type="text"],
-    input[type="email"],
-    textarea {
-      font-size: 15px;
-    }
-
-    .thank-you-text{
-      font-size: 24px;
-    }
-    
   }
 
 </style>

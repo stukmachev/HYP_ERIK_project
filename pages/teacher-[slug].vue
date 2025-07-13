@@ -195,7 +195,7 @@ onMounted(async () => {
   color: var(--Black);
   min-width: 476px;
   text-align: center;
-  font-size: 66px;
+  font-size: var(--font-small-title);
   font-style: normal;
   font-weight: 700;
 }
@@ -204,7 +204,7 @@ onMounted(async () => {
   min-width: 476px;
   color: var(--Black);
   text-align: center;
-  font-size: 23px;
+  font-size: var(--font-sub-subtitle);
   font-style: normal;
   font-weight: 600;
 }
@@ -220,7 +220,7 @@ onMounted(async () => {
   grid-template-rows: auto auto;
   row-gap: 40px;
   column-gap: 5px;
-  font-size: var(--font-size-2xl);
+  font-size: var(--font-text);
 }
 
 .certificate{
@@ -234,7 +234,7 @@ onMounted(async () => {
 
 .information-text{
   color: #000;
-  font-size: 21px;
+  font-size: var(--font-text);
   font-style: normal;
   font-weight: 400;
   line-height: 30px;
@@ -307,7 +307,7 @@ onMounted(async () => {
   height: fit-content;
   color: #000;
   text-align: center;
-  font-size: 36px;
+  font-size: var(--font-small-subtitle);
   font-style: italic;
   font-weight: 700;
   line-height: normal;
@@ -342,16 +342,10 @@ onMounted(async () => {
 
   .title{
     min-width: 240px;
-    font-size: 45px;
   }
 
   .subtitle {
     min-width: 240px;
-    font-size: 17px;
-  }
-
-  .information-text {
-    font-size: 15px;
   }
 
   .description{
@@ -435,7 +429,6 @@ onMounted(async () => {
 
   .learn-with-teacher{
     margin-top: -100px;
-    font-size: 30px;
   }
 
   .related-activities{

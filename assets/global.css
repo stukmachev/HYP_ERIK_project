@@ -10,8 +10,16 @@
     --font-montserrat: Montserrat;
 
     /* font sizes */
-    --font-size-sm: 14px;
-    --font-size-2xl: 21px;
+    --font-big-title: clamp(2.5rem, 6vw, 85px);
+    --font-small-title: clamp(2.5rem, 5vw, 66px);
+    --font-subtitle:    clamp(32px,  4vw, 50px);
+    --font-small-subtitle: clamp(32px,  3vw, 40px);
+    --font-sub-subtitle: clamp(14px,  2.2vw, 25px);
+    --font-text:  clamp(16px, 2.2vw, 22px);
+    --font-small-text: clamp(14px,  1vw, 15px);
+    --font-medium-text: clamp(16px,  2vw, 18px);
+    --font-big-text: clamp(28px, 2vw, 34px);
+
 
     /* Paddings */
     --padding-9xl: 28px;

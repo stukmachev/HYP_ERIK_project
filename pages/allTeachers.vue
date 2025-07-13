@@ -51,7 +51,7 @@ useSeoMeta({
 .loading {
   font-family: "Montserrat", sans-serif;
   text-align: center;
-  font-size: 18px;
+  font-size: var(--font-text);
   padding: 40px;
 }
 .page-wrapper {
