@@ -1,40 +1,3 @@
-<template>
-  <Navbar />
-  <div class="page-wrapper">
-    <h1 class="sr-only">Our Teachers</h1>
-    <div class="category-icons">
-      <div
-          class="category"
-          :class="{ active: selectedCategory === cat.key }"
-          v-for="cat in categoryMap"
-          :key="cat.key"
-          @click="selectCategory(cat.key)"
-      >
-        <img :src="`/icons/${cat.key}.png`" :alt="cat.key" />
-        <span :class="`text-${cat.key}`">{{ cat.label }}</span>
-      </div>
-    </div>
-
-    <div
-        v-if="selectedCategory !== 'all'"
-        :class="['category-banner', selectedCategory]"
-    >
-      <p>{{ categoryData?.description || '...' }}</p>
-    </div>
-    <transition-group name="fade" tag="div" class="activity-grid">
-      <ClickableCard
-          v-for="activity in filteredActivities"
-          :key="activity.id"
-          :label="activity.name.toUpperCase()"
-          :img_src="`/img/activities/${activity.photos?.[0]?.path?.split('/').pop()}`"
-          :to="`/activities/${activity.name.toLowerCase().trim().replace(/\s+/g, '-').replace(/[^\w-]/g, '')}-${activity.id}`"
-      />
-    </transition-group>
-
-  </div>
-  <Footer />
-</template>
-
 <script setup>
 import { useRoute, useRouter } from 'vue-router'
 import { ref, computed, watch, onMounted } from 'vue'
@@ -72,11 +35,9 @@ const categoryId = computed(() =>
     categoryMap.find(c => c.key === selectedCategory.value)?.id
 )
 
-// Данные
 const categoryData = ref(null)
 const allActivities = ref([])
 
-// Загрузка данных
 onMounted(async () => {
   try {
 
@@ -103,6 +64,8 @@ onMounted(async () => {
     console.error('Data load error:', err)
   }
 })
+
+// Category change
 watch(categoryId, async (newId) => {
   if (!newId) {
     categoryData.value = null
@@ -129,6 +92,54 @@ const filteredActivities = computed(() => {
   return allActivities.value.filter(a => a.activity_category_id === categoryId.value)
 })
 </script>
+
+<template>
+
+  <Navbar />
+
+  <div class="page-wrapper">
+    <h1 class="sr-only">Our Teachers</h1>
+
+    <div class="category-icons">
+      <div
+          class="category"
+          :class="{ active: selectedCategory === cat.key }"
+          v-for="cat in categoryMap"
+          :key="cat.key"
+          @click="selectCategory(cat.key)"
+      >
+        <img :src="`/icons/${cat.key}.png`" :alt="cat.key" />
+
+        <span :class="`text-${cat.key}`">{{ cat.label }}</span>
+
+      </div>
+
+    </div>
+
+    <div
+        v-if="selectedCategory !== 'all'"
+        :class="['category-banner', selectedCategory]"
+    >
+      <p>{{ categoryData?.description || '...' }}</p>
+
+    </div>
+
+    <transition-group name="fade" tag="div" class="activity-grid">
+      <ClickableCard
+          v-for="activity in filteredActivities"
+          :key="activity.id"
+          :label="activity.name.toUpperCase()"
+          :img_src="`/img/activities/${activity.photos?.[0]?.path?.split('/').pop()}`"
+          :to="`/activities/${activity.name.toLowerCase().trim().replace(/\s+/g, '-').replace(/[^\w-]/g, '')}-${activity.id}`"
+      />
+
+    </transition-group>
+
+  </div>
+
+  <Footer />
+
+</template>
 
 <style scoped>
 .page-wrapper {
@@ -202,9 +213,6 @@ const filteredActivities = computed(() => {
   justify-items: center;
   gap: 72px;
 }
-
-.fade-enter-active, .fade-leave-active { transition: all 0.3s ease; }
-.fade-enter-from, .fade-leave-to { opacity: 0; transform: scale(0.95); }
 
 @media (max-width: 1200px) {
   .activity-grid {

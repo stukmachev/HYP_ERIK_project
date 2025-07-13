@@ -1,11 +1,11 @@
 <script setup lang="js">
 import { useRouter } from 'vue-router'
 const props = defineProps({
-  label: {
+  label: {              //Button text
     type: String,
     required: true
   },
-  to: {
+  to: {                 //Button link
     type: String,
     required: true
   },
@@ -28,15 +28,16 @@ function handleClick() {
 </script>
 
 <template>
+
   <button class="interactive-button" :style="button_width" @click="handleClick">{{ label }}</button>
+
 </template>
 
 <style scoped>
   .interactive-button{
-    /*width: 310px;*/
     height: 55px;
     flex-shrink: 0;
-    background-color: #87609a; /*#CDB4DB*/
+    background-color: #87609a;
     color: #FFFFFF;
     border-radius: 6px;
     border: 0;
@@ -51,7 +52,7 @@ function handleClick() {
   }
 
   .interactive-button:hover {
-    background-color: #533263; /* a bit darker */
+    background-color: #533263;
   }
 
   .interactive-button:active {

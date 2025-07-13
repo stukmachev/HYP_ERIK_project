@@ -26,25 +26,35 @@ useSeoMeta({
   title: "All teachers",
   description: "In this page are listed all Yoga House teachers.",
 })
-
 </script>
 
 <template>
+
   <Navbar/>
+
   <div class="page-wrapper">
     <div v-if="teachers?.length" class="teachers-section">
+
     <h1 class="sr-only">Our Teachers</h1>
+
     <main class="main-content">
       <div class="grid-wrapper">
         <div v-for="(teacher, index) in teachers" :key="index" class="grid-item">
           <ClickableCard :img_src="teacher.photos?.[0]?.path" :to="'teacher-'+teacher.name.toLowerCase()+'-'+teacher.surname.toLowerCase()+'-'+teacher.id" :label="teacher.name+' '+teacher.surname"/>
         </div>
+
       </div>
+
     </main>
+
     </div>
+
     <div v-else class="loading">Loading teachers...</div>
+
     <Footer />
+
   </div>
+
 </template>
 
 <style scoped>

@@ -1,41 +1,3 @@
-<template>
-  <div class="timetable-section" v-if="timetableMatrix.length">
-    <h2 class="timetable-title">Timetable</h2>
-    <table class="timetable-table">
-      <thead>
-      <tr>
-        <th scope="col" class="">Teacher</th>
-        <th v-for="day in days" :key="day">
-          {{ day.charAt(0).toUpperCase() + day.slice(1) }}
-        </th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr v-for="(row, index) in timetableMatrix" :key="index">
-        <td class="teacher-name" data-label="Teacher">
-          {{ row.name }}
-        </td>
-        <td
-            v-for="day in days"
-            :key="day"
-            :data-label="day.charAt(0).toUpperCase() + day.slice(1)"
-            :class="{ 'empty-day': !row.schedule[day] }"
-        >
-          {{ row.schedule[day] || '—' }}
-        </td>
-      </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <div class="timetable-button-wrapper">
-    <InteractiveButton
-        label="Other Yoga Styles"
-        to="/activities"
-    />
-  </div>
-</template>
-
 <script setup>
 import { computed } from 'vue'
 
@@ -56,6 +18,7 @@ const days = [
   'sunday'
 ]
 
+// Matrix representation of timetable where row is for a teacher and column for weekday
 const timetableMatrix = computed(() => {
   const matrix = []
   const daysSet = new Set(days)
@@ -85,7 +48,7 @@ const timetableMatrix = computed(() => {
           }
         }
       } catch (e) {
-        console.warn(`❌ Failed to parse timetable for ${fullName}:`, timetable)
+        console.warn(`Failed to parse timetable for ${fullName}:`, timetable)
       }
     }
   }
@@ -100,6 +63,54 @@ const timetableMatrix = computed(() => {
   return matrix
 })
 </script>
+
+<template>
+  <div class="timetable-section" v-if="timetableMatrix.length">
+    <h2 class="timetable-title">Timetable</h2>
+
+    <table class="timetable-table">
+      <thead>
+      <tr>
+        <th scope="col" class="sr-only">Teacher</th>
+
+        <th v-for="day in days" :key="day">
+          {{ day.charAt(0).toUpperCase() + day.slice(1) }}
+        </th>
+
+      </tr>
+
+      </thead>
+
+      <tbody>
+      <tr v-for="(row, index) in timetableMatrix" :key="index">
+        <td class="teacher-name" data-label="Teacher">
+          {{ row.name }}
+        </td>
+
+        <td
+            v-for="day in days"
+            :key="day"
+            :data-label="day.charAt(0).toUpperCase() + day.slice(1)"
+            :class="{ 'empty-day': !row.schedule[day] }"
+        >
+          {{ row.schedule[day] || '—' }}
+        </td>
+
+      </tr>
+      </tbody>
+    </table>
+
+  </div>
+
+  <div class="timetable-button-wrapper">
+    <InteractiveButton
+        label="Other Yoga Styles"
+        to="/activities"
+    />
+
+  </div>
+
+</template>
 
 <style scoped>
 .timetable-section {

@@ -26,15 +26,23 @@ onUnmounted(() => {
 
 
 <template>
+
   <nav class="navbar">
+    <!-- Fullsize navbar-->
     <div class="nav-links">
       <router-link to="/" class="logo-link">
         <img class="logo" src="/logo.jpg" alt="home link" />
+
       </router-link>
+
       <router-link class="tab-link" to="/aboutUs">About Yoga House</router-link>
+
       <router-link class="tab-link" to="/allTeachers">Our Teachers</router-link>
+
       <router-link class="tab-link" to="/activities">Our Activities</router-link>
+
       <router-link class="tab-link" to="/contactUs">Contact Us</router-link>
+
     </div>
 
     <!-- Burger Icon -->
@@ -42,32 +50,44 @@ onUnmounted(() => {
       <div class="burger-left">
         <router-link to="/" class="logo-link">
           <img class="logo" src="/logo.jpg" alt="Logotype of the yoga center" />
+
         </router-link>
+
       </div>
+
       <div class="burger-right">
         <div class="burger" @click="toggleMenu">
           <div class="line"></div>
           <div class="line"></div>
           <div class="line"></div>
+
         </div>
+
       </div>
+
     </div>
+
   </nav>
 
   <!-- Mobile Menu -->
   <div class="mobile-menu" v-if="isMenuOpen">
     <router-link class="mobile-link" to="/aboutUs" @click="toggleMenu">About Yoga House</router-link>
+
     <router-link class="mobile-link" to="/allTeachers" @click="toggleMenu">Our Teachers</router-link>
+
     <router-link class="mobile-link" to="/activities" @click="toggleMenu">Our Activities</router-link>
+
     <router-link class="mobile-link" to="/contactUs" @click="toggleMenu">Contact Us</router-link>
+
   </div>
+
 </template>
 
 
 <style scoped>
 .navbar {
   height: 91px;
-  background-color: #87609a; /*#CDB4DB*/
+  background-color: #87609a;
   box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
 }
 
@@ -95,6 +115,7 @@ onUnmounted(() => {
   font-weight: 700;
   transition: text-decoration 0.3s;
 }
+
 .tab-link:hover {
   text-decoration: underline;
   text-decoration-thickness: 2px;
@@ -117,7 +138,7 @@ onUnmounted(() => {
 }
 
 .logo {
-  height: 55px; /* немного уменьшить для мобильного */
+  height: 55px;
 }
 
 .burger {

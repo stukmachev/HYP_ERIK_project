@@ -1,61 +1,3 @@
-<template>
-
-  <Navbar />
-  <div class="activity-page">
-    <div v-if="activity" class="activity-container">
-      <div class="header-section">
-        <div class="text-section">
-          <h1 class="activity-title">{{ activity.name }}</h1>
-          <p class="activity-description">{{ activity.description }}</p>
-        </div>
-        <img
-            :src="getImageUrl(activity.photos?.[0]?.path)"
-            :alt="activity.name"
-            class="activity-image"
-        />
-      </div>
-
-      <div class="experience-section">
-        <div class="experience-text">
-          <h2>What you'll experience:</h2>
-          <ul>
-            <li v-for="(item, i) in activity.additional_info?.experience || []" :key="'exp' + i">{{ item }}</li>
-          </ul>
-          <h3>Benefits:</h3>
-          <ul>
-            <li v-for="(item, i) in activity.additional_info?.benefits || []" :key="'ben' + i">{{ item }}</li>
-          </ul>
-          <h3>Recommended accessories:</h3>
-          <p>{{ (activity.additional_info?.bring_with_you || []).join(', ') }}</p>
-        </div>
-        <img class="room-image" :src="getRoomImage()" alt="Yoga Room" />
-      </div>
-
-      <div v-if="activity.Teachers?.length" class="teachers-section">
-        <h2>Teachers</h2>
-        <div class="teacher-cards">
-          <div class="teacher-cards">
-            <NuxtLink
-                v-for="teacher in activity.Teachers"
-                :key="teacher.id"
-                :to="'/teacher'+'-'+teacher.name.toLowerCase()+'-'+teacher.surname.toLowerCase()+'-'+teacher.id"
-                class="teacher-card"
-            >
-              <img :src="getTeacherImage(teacher.name)" :alt="teacher.name" />
-              <p>{{ teacher.name }} {{ teacher.surname }}</p>
-            </NuxtLink>
-          </div>
-        </div>
-        <Timetable v-if="activity?.Teachers?.length" :teachers="activity.Teachers" />
-      </div>
-    </div>
-
-    <div v-else class="loading">Loading activity...</div>
-
-  </div>
-  <Footer />
-</template>
-
 <script setup>
 import Navbar from '@/components/Navbar.vue'
 import Footer from '@/components/Footer.vue'
@@ -75,7 +17,7 @@ onMounted(async () => {
     const slug = route.params.id
     const id = slug.split('-').pop()
 
-    // First query: fetch activity by ID
+    // Fetching all activities by id
     const { data: activityData, error: activityError } = await $supabase
         .from('Activities')
         .select('*')
@@ -85,7 +27,7 @@ onMounted(async () => {
     if (activityError) throw activityError
     if (!activityData) throw new Error(`Activity with id ${id} not found`)
 
-    // Second query: fetch teachers and their timetable from join table
+    // Fetching teachers and their timetable from join table
     const { data: linkData, error: linkError } = await $supabase
         .from('TeachersActivity')
         .select(`
@@ -162,6 +104,86 @@ const getRoomImage = () => {
 }
 </script>
 
+<template>
+
+  <Navbar />
+
+  <div class="activity-page">
+    <div v-if="activity" class="activity-container">
+      <div class="header-section">
+        <div class="text-section">
+          <h1 class="activity-title">{{ activity.name }}</h1>
+
+          <p class="activity-description">{{ activity.description }}</p>
+
+        </div>
+
+        <img
+            :src="getImageUrl(activity.photos?.[0]?.path)"
+            :alt="activity.name"
+            class="activity-image"
+        />
+
+      </div>
+
+      <div class="experience-section">
+        <div class="experience-text">
+          <h2>What you'll experience:</h2>
+
+          <ul>
+            <li v-for="(item, i) in activity.additional_info?.experience || []" :key="'exp' + i">{{ item }}</li>
+          </ul>
+
+          <h3>Benefits:</h3>
+
+          <ul>
+            <li v-for="(item, i) in activity.additional_info?.benefits || []" :key="'ben' + i">{{ item }}</li>
+          </ul>
+
+          <h3>Recommended accessories:</h3>
+
+          <p>{{ (activity.additional_info?.bring_with_you || []).join(', ') }}</p>
+
+        </div>
+
+        <img class="room-image" :src="getRoomImage()" alt="Yoga Room" />
+
+      </div>
+
+      <div v-if="activity.Teachers?.length" class="teachers-section">
+        <h2>Teachers</h2>
+
+        <div class="teacher-cards">
+          <div class="teacher-cards">
+            <NuxtLink
+                v-for="teacher in activity.Teachers"
+                :key="teacher.id"
+                :to="'/teacher'+'-'+teacher.name.toLowerCase()+'-'+teacher.surname.toLowerCase()+'-'+teacher.id"
+                class="teacher-card"
+            >
+              <img :src="getTeacherImage(teacher.name)" :alt="teacher.name" />
+
+              <p>{{ teacher.name }} {{ teacher.surname }}</p>
+
+            </NuxtLink>
+
+          </div>
+
+        </div>
+
+        <Timetable v-if="activity?.Teachers?.length" :teachers="activity.Teachers" />
+
+      </div>
+
+    </div>
+
+    <div v-else class="loading">Loading activity...</div>
+
+  </div>
+
+  <Footer />
+
+</template>
 
 <style scoped>
 
@@ -335,6 +357,4 @@ const getRoomImage = () => {
     margin-top: 20px;
   }
 }
-
-
 </style>

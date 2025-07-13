@@ -1,3 +1,55 @@
+<script setup lang="ts">
+import { ref, onMounted } from 'vue'
+import { useNuxtApp } from '#app'
+
+interface Offer {
+  id: number
+  name: string
+  photos: { path: string, priority: number }[]
+  promotional_text: string
+}
+
+const offers = ref<Offer[]>([])
+
+useSeoMeta({
+  title: "Home",
+  description: "Main page with promotions",
+})
+
+const { $supabase } = useNuxtApp()
+
+const pending = ref(true)
+
+onMounted(async () => {
+  try {
+    pending.value = true
+    const { data, error } = await $supabase
+        .from('Activities')
+        .select('id, name, photos, promotional_text')
+        .eq('highlighted', true)
+        .order('name', { ascending: true })
+        .limit(2)
+
+    if (error) throw error
+
+    offers.value = (data ?? []).map(activity => ({
+      ...activity,
+      photos: Array.isArray(activity.photos) ? activity.photos : []
+    }))
+  } catch (error) {
+    console.error('Failed to fetch offers:', error)
+  } finally {
+    pending.value = false
+  }
+})
+
+
+function getPriorityOneImage(photos: { path: string, priority: number }[]): string {
+  const found = photos.find(p => p.priority === 1)
+  return found?.path || ''
+}
+</script>
+
 <template>
   <Navbar />
 
@@ -78,58 +130,5 @@
 
   <Footer />
 </template>
-
-<script setup lang="ts">
-import { ref, onMounted } from 'vue'
-import { useNuxtApp } from '#app'
-
-interface Offer {
-  id: number
-  name: string
-  photos: { path: string, priority: number }[]
-  promotional_text: string
-}
-
-const offers = ref<Offer[]>([])
-
-useSeoMeta({
-  title: "Home",
-  description: "Main page with promotions",
-})
-
-const { $supabase } = useNuxtApp()
-
-const pending = ref(true)
-
-onMounted(async () => {
-  try {
-    pending.value = true
-    const { data, error } = await $supabase
-        .from('Activities')
-        .select('id, name, photos, promotional_text')
-        .eq('highlighted', true)
-        .order('name', { ascending: true })
-        .limit(2)
-
-    if (error) throw error
-
-    offers.value = (data ?? []).map(activity => ({
-      ...activity,
-      photos: Array.isArray(activity.photos) ? activity.photos : []
-    }))
-  } catch (error) {
-    console.error('Failed to fetch offers:', error)
-  } finally {
-    pending.value = false
-  }
-})
-
-
-function getPriorityOneImage(photos: { path: string, priority: number }[]): string {
-  const found = photos.find(p => p.priority === 1)
-  return found?.path || ''
-}
-</script>
-
 
 <style scoped src="@/assets/index.css"></style>

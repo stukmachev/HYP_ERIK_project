@@ -1,8 +1,8 @@
 <script setup lang="ts">
-
 </script>
 
 <template>
+
   <footer class="footer-full">
     <p>© 2025 - Yoga House, Inc. All rights reserved.</p>
   </footer>
