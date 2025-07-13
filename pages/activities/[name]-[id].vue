@@ -356,5 +356,17 @@ const getRoomImage = () => {
     order: 3;
     margin-top: 20px;
   }
+
+  .experience-section {
+    flex-direction: column;
+    align-items: center;
+    margin-left: 0;
+    text-align: center;
+  }
+
+  .room-image {
+    max-width: 90%;
+    margin: 20px 0;
+  }
 }
 </style>
