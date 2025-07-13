@@ -4,7 +4,7 @@
     <table class="timetable-table">
       <thead>
       <tr>
-        <th scope="col" class="sr-only">Teacher</th>
+        <th scope="col" class="">Teacher</th>
         <th v-for="day in days" :key="day">
           {{ day.charAt(0).toUpperCase() + day.slice(1) }}
         </th>
