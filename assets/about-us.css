@@ -200,9 +200,27 @@ html, body {
 }
 
 @media (max-width: 768px) {
+    .hero {
+        height: 100vh !important;
+        min-height: unset;
+        overflow: hidden;
+    }
+
     .hero-card-front {
-        width: 80vw;
-        padding: 4vw;
-        font-size: calc(0.9vw + 0.5em);
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: min(90%, 600px);
+        max-width: 600px;
+        height: auto;
+        max-height: 90vh;
+
+        overflow-y: auto;
+        padding: min(2vw, 32px);
+        border-radius: clamp(12px, 1.5vw, 24px);
+
+        box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+        background-color: #fff;
     }
 }
