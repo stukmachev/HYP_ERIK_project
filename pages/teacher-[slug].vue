@@ -1,103 +1,73 @@
 <script setup>
-  import ClickableCard from "~/components/ClickableCard.vue"
-  import { useRoute } from 'vue-router'
-  import { ref, onMounted } from 'vue'
-  import { useNuxtApp, useSeoMeta } from '#app'
+import ClickableCard from "~/components/ClickableCard.vue"
+import { useRoute } from 'vue-router'
+import { computed, ref, onMounted, onBeforeUnmount } from 'vue'
+import { useSeoMeta } from '#app'
 
-  const { $supabase } = useNuxtApp()
-  const route = useRoute()
+const route = useRoute()
+const rawSlug = route.params.slug
+const id = rawSlug.split('-').pop()
 
-  const rawSlug = route.params.slug
-  const id = rawSlug.split('-').pop()
+// Firstly fetch teacher data
+const { data: teacherData, error: teacherError, pending: pendingTeacher } = await useFetch('/api/teacher/getTeacherById', {
+  query: { id },
+  server: true,
+  lazy: false,
+})
 
-  const teacher = ref(null)
-  const teacherActivities = ref([])
-  const error = ref(null)
-  const pending = ref(true)
-  const extra_photos = ref([])
+// Then fetch teacher's related activities
+const { data: activityData, error: activityError } = await useFetch('/api/teacher/getRelatedActivities', {
+  query: { id },
+  server: true,
+  lazy: false,
+})
 
-  const windowWidth = ref(0)
+// Compute teacher object with all the queried information
+const teacher = computed(() => teacherData.value?.data ?? null)
 
-  //start value if on server
-  if (process.client) {
-    windowWidth.value = window.innerWidth
+const teacherActivities = computed(() =>
+    (activityData.value?.data ?? []).map(item => item.Activities).filter(Boolean)
+)
+
+const extra_photos = computed(() =>
+    Array.isArray(teacher.value?.photos) ? teacher.value.photos.slice(1) : []
+)
+
+// Window resize (client-only)
+const windowWidth = ref(0)
+const responsiveWidth = computed(() => {
+  if (windowWidth.value < 440) {
+    return 300 * (windowWidth.value / 440)
+  } else {
+    return 300
   }
+})
 
-  //responsive size
-  const responsiveWidth = computed(() => {
-    if (windowWidth.value < 440) {
-      return 300 * (windowWidth.value / 440)
-    } else {
-      return 300
-    }
+onMounted(() => {
+  windowWidth.value = window.innerWidth
+  const update = () => (windowWidth.value = window.innerWidth)
+  window.addEventListener('resize', update)
+  onBeforeUnmount(() => {
+    window.removeEventListener('resize', update)
   })
+})
 
-  onMounted(async () => {
-    pending.value = true
-    try {
-      // First: load teacher
-      const { data: teacherData, error: teacherError } = await $supabase
-          .from('Teachers')
-          .select('*')
-          .eq('id', id)
-          .single()
-
-      if (teacherError) throw teacherError
-      if (!teacherData) throw new Error(`Teacher with id ${id} not found`)
-      teacher.value = teacherData
-
-      // Load activities for this teacher from TeachersActivity
-      const { data: activityJoinData, error: joinError } = await $supabase
-          .from('TeachersActivity')
-          .select(`
-          Activities (
-            id,
-            name,
-            description,
-            photos,
-            highlighted
-          )
-        `)
-          .eq('teacher_id', id)
-
-      if (joinError) throw joinError
-
-      // Flatten the join result into a list of activities
-      teacherActivities.value = activityJoinData
-          .map(item => item.Activities)
-          .filter(Boolean)
-
-      // Optional: prepare extra photos
-      extra_photos.value = Array.isArray(teacherData.photos)
-          ? teacherData.photos.slice(1)
-          : []
-
-      //Handles ClickableCards responsiveness
-      function updateViewWidth() {
-        windowWidth.value = window.innerWidth;
-      }
-      window.addEventListener('resize', updateViewWidth);
-
-      // SEO
-      useSeoMeta({
-        title: `${teacher.value.name} ${teacher.value.surname}`,
-        description: `This is ${teacher.value.name} ${teacher.value.surname}'s page, where their courses, experiences and skills can be found.`,
-      })
-    } catch (err) {
-      console.error('Error loading teacher or activities:', err)
-      error.value = err
-    } finally {
-      pending.value = false
-    }
+// SEO
+if (teacher.value) {
+  useSeoMeta({
+    title: `${teacher.value.name} ${teacher.value.surname}`,
+    description: `This is ${teacher.value.name} ${teacher.value.surname}'s page.`,
   })
+}
 </script>
 
 <template>
 
   <Navbar></Navbar>
 
-  <div v-if="pending" class="loading">Loading...</div>
-  <div v-else-if="error">Error: {{ error.message }}</div>
+  <div v-if="pendingTeacher">Loading teacher...</div>
+  <div v-else-if="teacherError">Error: {{ teacherError.message }}</div>
+  <div v-else-if="activityError">Error: {{activityError.message}}</div>
 
   <div v-else>
 

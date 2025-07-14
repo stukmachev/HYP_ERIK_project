@@ -2,9 +2,7 @@
 import Navbar from "@/components/Navbar.vue";
 import Footer from "@/components/Footer.vue";
 import { ref } from 'vue';
-import { useNuxtApp, useSeoMeta } from '#app'
-
-const { $supabase } = useNuxtApp()
+import { useSeoMeta } from '#app'
 
 const formSubmitted = ref(false)
 const fullname = ref('')
@@ -19,16 +17,17 @@ const status = ref(
 // Function to submit contact form to Supabase 'requests' table
 async function submitForm() {
   try {
-    const { error } = await $supabase
-        .from('Requests')
-        .insert([{
-          fullname: fullname.value,
-          email: email.value,
-          text: message.value
-        }])
+    const { data, error } = await useFetch('/api/contact/insertNewRequest', {
+      method: 'POST',
+      body: {
+        fullname: fullname.value,
+        email: email.value,
+        message: message.value,
+      }
+    })
 
-    if (error) {
-      console.error('Form submission failed:', error)
+    if (error.value || data.value?.success === false) {
+      console.error('Form submission failed:', error.value || data.value?.error)
       status.value = 'Some error interrupted your flow of energy —\n try again later.'
     } else {
       status.value = 'Your message has found its way to us.\n' +

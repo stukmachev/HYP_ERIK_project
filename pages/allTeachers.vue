@@ -2,30 +2,20 @@
 import ClickableCard from "@/components/ClickableCard.vue";
 import Navbar from "@/components/Navbar.vue";
 import Footer from "@/components/Footer.vue";
-const items = Array.from({ length: 12 }, (_, i) => `Option ${i + 1}`)
-import { useNuxtApp } from '#app'
-import { ref, onMounted } from 'vue'
 
-const { $supabase } = useNuxtApp()
-const teachers = ref([])
-
-onMounted(async () => {
-  const { data, error } = await $supabase
-      .from('Teachers')
-      .select('*')
-      .order('name', { ascending: true })
-
-  if (error) {
-    console.error('Error loading teachers:', error)
-  } else {
-    teachers.value = data
-  }
+const { data, error } = await useFetch('/api/teacher/getAllTeachers', {
+  server: true,
+  lazy: false,
 })
+
+// Compute teachers array with all the queried information
+const teachers = computed(() => data.value?.data ?? null)
 
 useSeoMeta({
   title: "All teachers",
   description: "In this page are listed all Yoga House teachers.",
 })
+
 </script>
 
 <template>

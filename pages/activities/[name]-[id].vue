@@ -1,71 +1,90 @@
-<script setup>
+<script setup lang="ts">
 import Navbar from '@/components/Navbar.vue'
 import Footer from '@/components/Footer.vue'
 import Timetable from '@/components/Timetable.vue'
 
 import { useRoute } from 'vue-router'
 import { ref, onMounted } from 'vue'
-import { useNuxtApp } from '#app'
-
-const { $supabase } = useNuxtApp()
 const route = useRoute()
 const activity = ref(null)
 
-onMounted(async () => {
+const slug = route.params.id
+const id = slug.split('-').pop()
 
-  try {
-    const slug = route.params.id
-    const id = slug.split('-').pop()
-
-    // Fetching all activities by id
-    const { data: activityData, error: activityError } = await $supabase
-        .from('Activities')
-        .select('*')
-        .eq('id', id)
-        .single()
-
-    if (activityError) throw activityError
-    if (!activityData) throw new Error(`Activity with id ${id} not found`)
-
-    // Fetching teachers and their timetable from join table
-    const { data: linkData, error: linkError } = await $supabase
-        .from('TeachersActivity')
-        .select(`
-        timetable,
-        Teachers (
-          id,
-          name,
-          surname,
-          photos
-        )
-      `)
-        .eq('activity_id', id)
-
-    if (linkError) throw linkError
-
-    // Extract and attach timetable
-    const teachers = linkData
-        .filter(item => item.Teachers) // only valid links
-        .map(item => ({
-          ...item.Teachers,
-          timetable: item.timetable,
-          photos: Array.isArray(item.Teachers.photos) ? item.Teachers.photos : []
-        }))
-
-    // Merge into one object
-    activity.value = {
-      ...activityData,
-      Teachers: teachers
-    }
-    useSeoMeta({
-      title: activity.value.name,
-      description: "Page contains information about activity, teachers who teach this activity and timetable",
-    })
-  } catch (err) {
-    console.error('Error loading activity:', err)
+interface Activity {
+  id: number
+  name: string
+  description: string
+  activity_category_id: number
+  additional_info?: {
+    benefits?: string[]
+    bring_with_you?: string[]
   }
-})
+  photos: { path: string, priority: number }[]
+  teachers: TeacherWithSchedule[]
+}
 
+interface TeacherWithSchedule {
+  id: number
+  name: string
+  surname: string
+  photos: {
+    path: string
+    priority: number
+  }[]
+  timetable: Record<string, string> // например: { monday: '09:00–10:00' }
+}
+
+
+const activityData = ref<Activity>(null)
+// First query: fetch activity by ID
+const { data, error } = await useFetch<{ success: boolean; data: Offer[] }>(
+    '/api/activity/getActivityById?id='+String(id),
+    {
+      server: true,
+      lazy: false
+    }
+)
+
+if (error.value) {
+  console.error('Fetch error:', error.value)
+} else {
+  activityData.value = {
+    ...data.value,
+    photos: Array.isArray(data.value?.photos) ? data.value.photos : []
+  }
+}
+
+const teachers=ref<TeacherWithSchedule[]>([])
+
+// Second query: fetch teachers and their timetable from join table
+const {data: teacherData, error: teacherError } = await useFetch<{ success: boolean; data}>(
+    `/api/teacher/getTeacherByActivity?id=${id}`,
+    {
+      server: true,
+      lazy: false
+    }
+)
+
+if (teacherError.value) {
+  console.error('Fetch error:', teacherError.value)
+} else {
+  teachers.value = teacherData.value?.data?.filter(item => item.Teachers)
+      .map(item => ({
+        ...item.Teachers,
+        timetable: JSON.parse(item.timetable),
+        photos: Array.isArray(item.Teachers.photos) ? item.Teachers.photos : []
+      }))
+}
+activity.value = {
+  ...activityData.value.data,
+  Teachers: teachers
+}
+
+useSeoMeta({
+  title: activity.name,
+  description: "Page contains information about activity, teachers who teach this activity and timetable",
+})
 const getImageUrl = (path) => {
   return path ? `/img/activities/${path.split('/').pop()}` : ''
 }

@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { useNuxtApp } from '#app'
 
 interface Offer {
   id: number
@@ -16,32 +15,28 @@ useSeoMeta({
   description: "Main page with promotions",
 })
 
-const { $supabase } = useNuxtApp()
 
 const pending = ref(true)
 
-onMounted(async () => {
-  try {
-    pending.value = true
-    const { data, error } = await $supabase
-        .from('Activities')
-        .select('id, name, photos, promotional_text')
-        .eq('highlighted', true)
-        .order('name', { ascending: true })
-        .limit(2)
+const { data, error } = await useFetch<{ success: boolean; data: Offer[] }>(
+    '/api/activity/getHighlightActivity',
+    {
+      server: true,
+      lazy: false
+    }
+)
 
-    if (error) throw error
+if (error.value) {
+  console.error('Fetch error:', error.value)
+} else {
+  offers.value = (data.value?.data ?? []).map(activity => ({
+    ...activity,
+    photos: Array.isArray(activity.photos) ? activity.photos : []
+  }))
+}
 
-    offers.value = (data ?? []).map(activity => ({
-      ...activity,
-      photos: Array.isArray(activity.photos) ? activity.photos : []
-    }))
-  } catch (error) {
-    console.error('Failed to fetch offers:', error)
-  } finally {
-    pending.value = false
-  }
-})
+pending.value = false
+
 
 
 function getPriorityOneImage(photos: { path: string, priority: number }[]): string {
@@ -109,7 +104,9 @@ function getPriorityOneImage(photos: { path: string, priority: number }[]): stri
               <img :src="getPriorityOneImage(offer.photos)" class="offer-card__image" :alt="`Image for offer: ${offer.name}`" />
             </div>
             <div class="offer-card__content">
-              <p class="offer-card__description" v-html="offer.promotional_text"></p>
+              <client-only>
+                <p class="offer-card__description" v-html="offer.promotional_text"></p>
+              </client-only>
               <div class="offer-card__button-wrapper">
                 <InteractiveButton
                     :to="`/activities/${offer.name.toLowerCase().trim().replace(/\s+/g, '-').replace(/[^\w-]/g, '')}-${offer.id}`"

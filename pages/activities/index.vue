@@ -1,12 +1,10 @@
-<script setup>
+<script setup lang="ts">
 import { useRoute, useRouter } from 'vue-router'
-import { ref, computed, watch, onMounted } from 'vue'
+import { ref, computed, watch } from 'vue'
 import Navbar from '@/components/Navbar.vue'
 import Footer from '@/components/Footer.vue'
 import ClickableCard from '@/components/ClickableCard.vue'
-import { useNuxtApp } from '#app'
 
-const { $supabase } = useNuxtApp()
 const route = useRoute()
 const router = useRouter()
 
@@ -15,6 +13,7 @@ useSeoMeta({
   description: "Page contains all activities with filtering by categories",
 })
 
+// Категории (можно тоже грузить из Supabase, но пока оставим вручную)
 const categoryMap = [
   { key: 'body', id: 1, label: 'Body' },
   { key: 'soul', id: 2, label: 'Soul' },
@@ -35,56 +34,72 @@ const categoryId = computed(() =>
     categoryMap.find(c => c.key === selectedCategory.value)?.id
 )
 
-const categoryData = ref(null)
-const allActivities = ref([])
+// Данные
+const categoryDescription = ref(null)
 
-onMounted(async () => {
-  try {
+interface Activity {
+  id: number
+  name: string
+  photos: { path: string, priority: number }[]
+}
 
-    const { data: activities, error: actErr } = await $supabase
-        .from('Activities')
-        .select('*')
-        .order('name', { ascending: true })
+const allActivities = ref<Activity[]>([])
 
-    if (actErr) throw actErr
-    allActivities.value = activities
-
-    if (categoryId.value) {
-      const { data: cat, error: catErr } = await $supabase
-          .from('Categories')
-          .select('*')
-          .eq('id', categoryId.value)
-          .single()
-
-      if (catErr) throw catErr
-      categoryData.value = cat
+const { data, error } = await useFetch<{ success: boolean; data}>(
+    '/api/activity/getAllActivities',
+    {
+      server: true,
+      lazy: false
     }
-    console.log(categoryData)
-  } catch (err) {
-    console.error('Data load error:', err)
-  }
-})
+)
 
-// Category change
+if (error.value) {
+  console.error('Fetch error:', error.value)
+} else {
+  allActivities.value = (data.value?.data ?? []).map(activity => ({
+    ...activity,
+    photos: Array.isArray(activity.photos) ? activity.photos : []
+  }))
+}
+
+if (categoryId.value) {
+  const { data, error } = await useFetch<{ success: boolean; data}>(
+      '/api/getCategory?id='+String(categoryId.value),
+      {
+        server: true,
+        lazy: false
+      }
+  )
+
+  if (error.value) {
+    console.error('Fetch error:', error.value)
+  } else {
+    categoryDescription.value=categoryDescription.value = data.value?.data?.description
+  }
+}
+
 watch(categoryId, async (newId) => {
   if (!newId) {
-    categoryData.value = null
+    categoryDescription.value = null
     return
   }
 
-  try {
-    const { data: cat, error: catErr } = await $supabase
-        .from('Categories')
-        .select('*')
-        .eq('id', newId)
-        .single()
-
-    if (catErr) throw catErr
-    categoryData.value = cat
-  } catch (err) {
-    console.error('Failed to load category data:', err)
+  const { data, error } = await useFetch<{ success: boolean; data: { description: string } }>(
+      `/api/getCategory?id=${newId}`,
+      {
+        server: false,
+        lazy: false
+      }
+  )
+  console.log(data.value)
+  if (error.value) {
+    console.error('Fetch error:', error.value)
+  } else {
+    categoryDescription.value = data.value?.data?.description
+    console.log(categoryDescription.value)
   }
 })
+
 
 // Category filter
 const filteredActivities = computed(() => {
@@ -94,12 +109,9 @@ const filteredActivities = computed(() => {
 </script>
 
 <template>
-
   <Navbar />
-
   <div class="page-wrapper">
     <h1 class="sr-only">Our Teachers</h1>
-
     <div class="category-icons">
       <div
           class="category"
@@ -109,21 +121,16 @@ const filteredActivities = computed(() => {
           @click="selectCategory(cat.key)"
       >
         <img :src="`/icons/${cat.key}.png`" :alt="cat.key" />
-
         <span :class="`text-${cat.key}`">{{ cat.label }}</span>
-
       </div>
-
     </div>
 
     <div
         v-if="selectedCategory !== 'all'"
         :class="['category-banner', selectedCategory]"
     >
-      <p>{{ categoryData?.description || '...' }}</p>
-
+      <p>{{ categoryDescription || '...' }}</p>
     </div>
-
     <transition-group name="fade" tag="div" class="activity-grid">
       <ClickableCard
           v-for="activity in filteredActivities"
@@ -132,13 +139,9 @@ const filteredActivities = computed(() => {
           :img_src="`/img/activities/${activity.photos?.[0]?.path?.split('/').pop()}`"
           :to="`/activities/${activity.name.toLowerCase().trim().replace(/\s+/g, '-').replace(/[^\w-]/g, '')}-${activity.id}`"
       />
-
     </transition-group>
-
   </div>
-
   <Footer />
-
 </template>
 
 <style scoped>
@@ -195,7 +198,7 @@ const filteredActivities = computed(() => {
   margin: 30px auto;
   color: white;
   font-weight: 600;
-  font-size: var(--font-medium-text);
+  font-size: 20px;
   text-align: center;
   width: 80%;
   max-width: 960px;
@@ -213,6 +216,9 @@ const filteredActivities = computed(() => {
   justify-items: center;
   gap: 72px;
 }
+
+.fade-enter-active, .fade-leave-active { transition: all 0.3s ease; }
+.fade-enter-from, .fade-leave-to { opacity: 0; transform: scale(0.95); }
 
 @media (max-width: 1200px) {
   .activity-grid {

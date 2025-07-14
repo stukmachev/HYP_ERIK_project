@@ -1,4 +1,5 @@
 export default defineNuxtConfig({
+  ssr: true,
   compatibilityDate: '2024-11-01',
   devtools: { enabled: true },
 
@@ -21,6 +22,9 @@ export default defineNuxtConfig({
 
 
   runtimeConfig: {
+    supabaseUrl: process.env.SUPABASE_URL,
+    supabaseKey: process.env.SUPABASE_SERVICE_ROLE_KEY,
+
     public: {
       supabaseUrl: process.env.SUPABASE_URL,
       supabaseKey: process.env.SUPABASE_ANON_KEY
