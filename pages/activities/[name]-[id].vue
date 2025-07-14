@@ -128,11 +128,6 @@ const getRoomImage = () => {
 
       <div class="experience-section">
         <div class="experience-text">
-          <h2>What you'll experience:</h2>
-
-          <ul>
-            <li v-for="(item, i) in activity.additional_info?.experience || []" :key="'exp' + i">{{ item }}</li>
-          </ul>
 
           <h3>Benefits:</h3>
 
