@@ -9,7 +9,7 @@ export default defineEventHandler(async (event) => {
         .select('id, name, photos, promotional_text')
         .eq('highlighted', true)
         .order('name', { ascending: true })
-        .limit(2)
+        .limit(4)
 
     if (error) {
         return {
