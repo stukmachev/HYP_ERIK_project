@@ -71,34 +71,30 @@ const timetableMatrix = computed(() => {
     <table class="timetable-table">
       <thead>
       <tr>
-        <th scope="col" class="sr-only">Teacher</th>
-
+        <!-- пустая ячейка -->
+        <th></th>
         <th v-for="day in days" :key="day">
           {{ day.charAt(0).toUpperCase() + day.slice(1) }}
         </th>
-
       </tr>
-
       </thead>
-
       <tbody>
       <tr v-for="(row, index) in timetableMatrix" :key="index">
-        <td class="teacher-name" data-label="Teacher">
+        <th scope="row" class="teacher-name">
           {{ row.name }}
-        </td>
-
+        </th>
         <td
             v-for="day in days"
             :key="day"
             :data-label="day.charAt(0).toUpperCase() + day.slice(1)"
-            :class="{ 'empty-day': !row.schedule[day] }"
         >
-          {{ row.schedule[day] || '—' }}
+          {{ row.schedule[day] || '---' }}
         </td>
-
       </tr>
       </tbody>
     </table>
+
+
 
   </div>
 
